@@ -1,6 +1,6 @@
-# Processador de Consultas — entrega 3
+# Processador de Consultas — entrega 4
 
-**Prazo: 22/10/2026 · branch `codex/entrega-3-2026-10-22`.** Acrescenta antecipação de seleção e projeção. O grafo otimizado filtra cada tabela antes das combinações e conserva apenas os campos necessários depois dos filtros. A ordem das relações, a ordem textual dos filtros e os produtos cartesianos do SQL continuam preservados. Executa os dois planos em memória para verificar as transformações.
+**Prazo: 27/10/2026 · branch `codex/entrega-4-2026-10-27`.** Completa as heurísticas: prioriza filtros mais restritivos, inicia pela relação com menor cardinalidade estimada, escolhe as próximas relações por conexão e estimativa e substitui produtos cartesianos seguidos de predicados entre tabelas por junções. Inclui execução, métricas e verificação da equivalência dos resultados.
 
 A lógica SQL é inteiramente em **Python**. HTML/CSS/JavaScript apresentam a interface e os dados calculados pelo backend. O código desta branch corresponde à etapa indicada; cada entrega acumula os recursos anteriores.
 
@@ -9,7 +9,7 @@ A lógica SQL é inteiramente em **Python**. HTML/CSS/JavaScript apresentam a in
 Requer Python 3.10 ou superior, apenas com a biblioteca padrão. Não é necessário instalar pacotes, Node.js ou MySQL.
 
 ```powershell
-git switch codex/entrega-3-2026-10-22
+git switch codex/entrega-4-2026-10-27
 python server.py
 ```
 
@@ -23,11 +23,11 @@ Alternativa Windows: `.\testar.cmd`. Esta etapa foi verificada com **35 testes**
 
 ## Demonstrar esta entrega
 
-1. Carregue **Produtos e categorias** e use **Comparar** no grafo.
-2. Observe `σ` e `π` próximos às leituras: os filtros precedem a projeção local e os campos de junção permanecem.
-3. Abra **Plano de execução** e **Resultados** para conferir tuplas, atributos e equivalência.
-4. Carregue **Junção no WHERE**: o plano otimizado ainda conserva `×`; sua conversão entra na entrega 4.
-5. Em **Pedidos por cliente**, confira que a ordem das tabelas segue o SQL.
+1. Carregue **Junção no WHERE** e compare os grafos: `×` seguido de condição entre tabelas é substituído por `⋈`.
+2. Carregue **Pedidos por cliente**: a tabela filtrada mais restritiva deve iniciar o plano.
+3. Teste `SELECT Nome FROM Produto WHERE Preco > 10 AND Categoria_idCategoria = 1`: a igualdade passa a ser aplicada primeiro pela estimativa.
+4. Confira a ordem dos operadores e as métricas em **Plano de execução**.
+5. Confira a equivalência em **Resultados** e exporte o CSV ou a análise JSON.
 
 ## Código desta etapa
 
@@ -56,7 +56,7 @@ O guia [ENTREGA.md](ENTREGA.md) explica o fluxo, os algoritmos, as alterações 
 | 20/10/2026 | Conversão para álgebra relacional | Disponível |
 | 20/10/2026 | Grafo não otimizado | Disponível |
 | 22/10/2026 | Heurísticas de projeção e seleção | Disponível |
-| 27/10/2026 | Demais heurísticas | Etapa futura |
+| 27/10/2026 | Demais heurísticas | Disponível |
 
 ## Branches cumulativas
 
@@ -65,7 +65,7 @@ O guia [ENTREGA.md](ENTREGA.md) explica o fluxo, os algoritmos, as alterações 
 | 1 | 15/10/2026 | Disponível | [codex/entrega-1-2026-10-15](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-1-2026-10-15) |
 | 2 | 20/10/2026 | Disponível | [codex/entrega-2-2026-10-20](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-2-2026-10-20) |
 | 3 | 22/10/2026 | Disponível | [codex/entrega-3-2026-10-22](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-3-2026-10-22) |
-| 4 | 27/10/2026 | Etapa futura | [codex/entrega-4-2026-10-27](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-4-2026-10-27) |
+| 4 | 27/10/2026 | Disponível | [codex/entrega-4-2026-10-27](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-4-2026-10-27) |
 
 A `main` mantém a aplicação completa. As branches foram organizadas a partir do projeto já finalizado, com recorte real dos módulos e da interface por etapa. As datas nos nomes são os prazos fornecidos, e os commits conservam sua data real. Disponível não significa entregue à disciplina. O documento informa penalidade de −1 por item.
 

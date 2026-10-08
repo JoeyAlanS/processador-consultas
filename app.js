@@ -232,7 +232,7 @@ function renderDeliveries() {
     [3, '22/10/2026', 'Heurísticas de projeção e seleção', 'Filtros e redução de atributos antecipados'],
     [4, '27/10/2026', 'Demais heurísticas', 'Seletividade, ordem das relações e conversão de produto em junção'],
   ];
-  $('#panel').innerHTML = heading('Cronograma de entregas · etapa 3', 'Prazos de Entregáveis.pdf · esta branch inclui os requisitos até 22/10/2026.') + `<div class="table-wrap"><table><thead><tr><th>Prazo</th><th>Requisito</th><th>Descrição</th><th>Situação nesta branch</th></tr></thead><tbody>${deliveries.map(([delivery, date, title, description]) => `<tr><td class="delivery-date">${date}</td><td>${title}</td><td>${description}</td><td><span class="badge">${delivery <= 3 ? 'Disponível' : 'Etapa futura'}</span></td></tr>`).join('')}</tbody></table></div><p class="note">Disponível indica implementação nesta branch. A entrega à disciplina deve ser realizada pela equipe. Penalidade indicada no documento: −1 por item.</p>`;
+  $('#panel').innerHTML = heading('Cronograma de entregas · etapa 4', 'Prazos de Entregáveis.pdf · esta branch inclui os requisitos até 27/10/2026.') + `<div class="table-wrap"><table><thead><tr><th>Prazo</th><th>Requisito</th><th>Descrição</th><th>Situação nesta branch</th></tr></thead><tbody>${deliveries.map(([delivery, date, title, description]) => `<tr><td class="delivery-date">${date}</td><td>${title}</td><td>${description}</td><td><span class="badge">${delivery <= 4 ? 'Disponível' : 'Etapa futura'}</span></td></tr>`).join('')}</tbody></table></div><p class="note">Disponível indica implementação nesta branch. A entrega à disciplina deve ser realizada pela equipe. Penalidade indicada no documento: −1 por item.</p>`;
 }
 
 async function initialize() {

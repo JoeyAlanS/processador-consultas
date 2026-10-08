@@ -1,4 +1,4 @@
-"""Entrega 3: seleção e projeção antecipadas; mantém a ordem do SQL."""
+"""Construção dos grafos, álgebra relacional e otimização heurística."""
 
 import math
 
@@ -92,34 +92,51 @@ def build_plan(query, optimized=False, data=None):
         root = project(root, [column["key"] for column in query["columns"]], True)
         notes = ["As tabelas seguem a ordem da consulta.", "Filtros do WHERE são aplicados após a combinação das relações.", "A projeção final mantém os campos solicitados."]
     else:
-        # Nesta entrega só antecipamos seleção e projeção. A ordem das
-        # relações e os produtos cartesianos do SQL são preservados.
         predicates = [predicate for join in query["joins"] for predicate in comparisons(join["condition"])] + comparisons(query["where"])
         multi = [predicate for predicate in predicates if len(aliases(predicate)) > 1]
+        constants = [predicate for predicate in predicates if not aliases(predicate)]
         required = {column["key"] for column in query["columns"]} | {column["key"] for predicate in multi for column in references(predicate)}
         branches = []
-        for table in query["tables"]:
+        for position, table in enumerate(query["tables"]):
             branch = scan(table)
-            filters = [predicate for predicate in predicates if aliases(predicate) == [table["alias"]]]
+            filters = sorted((predicate for predicate in predicates if aliases(predicate) == [table["alias"]]), key=factor)
+            # Nós separados tornam a ordem dos filtros mais restritivos visível.
+            for predicate in filters:
+                branch = select(branch, [predicate])
             if filters:
-                branch = select(branch, filters)
-                notes.append(f"Seleção antecipada em {table['alias']}: {' AND '.join(map(predicate_text, filters))}. Mantém a ordem textual dos filtros.")
+                notes.append(f"Seleção antecipada em {table['alias']}: {' AND '.join(map(predicate_text, filters))}. Predicados ordenados pela seletividade estimada.")
             kept = [column for column in branch["columns"] if column in required]
             if len(kept) < len(branch["columns"]):
-                notes.append(f"Projeção antecipada em {table['alias']}: {len(branch['columns'])} → {len(kept)} atributos; conserva campos de saída e de predicados entre tabelas.")
+                notes.append(f"Projeção antecipada em {table['alias']}: {len(branch['columns'])} → {len(kept)} atributos; mantém campos de saída e de junção.")
                 branch = project(branch, kept)
-            branches.append(branch)
-        root = branches[0]
-        for index, branch in enumerate(branches[1:]):
-            # Predicados locais do ON já foram aplicados nas respectivas
-            # tabelas. Constantes e condições entre tabelas ficam no ON.
-            remaining = [predicate for predicate in comparisons(query["joins"][index]["condition"]) if len(aliases(predicate)) != 1]
-            root = combine(root, branch, remaining)
-        remaining = [predicate for predicate in comparisons(query["where"]) if len(aliases(predicate)) != 1]
-        if remaining:
-            root = select(root, remaining)
+            branches.append({"alias": table["alias"], "position": position, "node": branch})
+        branches.sort(key=lambda branch: (branch["node"]["estimatedRows"], branch["position"]))
+        first = branches.pop(0)
+        root = first["node"]
+        joined = {first["alias"]}
+        notes.append(f"Início pela relação {first['alias']}, com menor cardinalidade estimada após os filtros ({format_estimate(root['estimatedRows'])} tuplas).")
+        pending = list(multi)
+        while branches:
+            candidates = []
+            for branch in branches:
+                scope = joined | {branch["alias"]}
+                ready = [predicate for predicate in pending if set(aliases(predicate)) <= scope]
+                estimate = root["estimatedRows"] * branch["node"]["estimatedRows"] * restriction(ready)
+                candidates.append({"branch": branch, "predicates": ready, "estimate": estimate})
+            chosen = min(candidates, key=lambda item: (not bool(item["predicates"]), item["estimate"], item["branch"]["position"]))
+            branch = chosen["branch"]
+            root = combine(root, branch["node"], chosen["predicates"])
+            applied = {id(predicate) for predicate in chosen["predicates"]}
+            pending = [predicate for predicate in pending if id(predicate) not in applied]
+            joined.add(branch["alias"])
+            branches.remove(branch)
+            if chosen["predicates"]:
+                notes.append(f"Junção com {branch['alias']}: {' AND '.join(map(predicate_text, chosen['predicates']))}. Prioriza ligação entre tabelas e menor resultado estimado.")
+            else:
+                notes.append(f"Produto cartesiano necessário com {branch['alias']}: não há predicado ligando essa relação às já processadas.")
+        if constants:
+            root = select(root, constants)
         root = project(root, [column["key"] for column in query["columns"]], True)
-        notes.append("Ordem das tabelas e condições entre relações preservadas; o produto cartesiano necessário ao plano original continua nesta etapa.")
     order = execution_order(root)
     for step, operator in enumerate(order, 1):
         operator.update(label=node_label(operator), symbol=SYMBOLS[operator["type"]], name=NAMES[operator["type"]], step=step, width=len(set(operator["columns"])))

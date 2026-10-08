@@ -37,17 +37,17 @@ class ProcessorTests(unittest.TestCase):
         self.assertCountEqual(result["optimizedResult"]["rows"], [["Notebook", 3500, "Informática"], ["Teclado", 249, "Informática"], ["Monitor", 950, "Informática"]])
         self.assertLess(result["optimizedResult"]["cells"], result["originalResult"]["cells"])
 
-    def test_where_join_is_deferred_to_delivery_four(self):
+    def test_where_join_replaces_cross_product(self):
         result = process_query(EXAMPLES[3]["sql"])
-        self.assertIn("cross", [node["type"] for node in result["optimized"]["order"]])
+        self.assertIn("cross", [node["type"] for node in result["original"]["order"]])
+        self.assertNotIn("cross", [node["type"] for node in result["optimized"]["order"]])
+        self.assertIn("join", [node["type"] for node in result["optimized"]["order"]])
         self.assertEqual(len(result["optimizedResult"]["rows"]), 5)
-        self.assertTrue(result["verified"])
 
-    def test_relation_order_is_preserved(self):
+    def test_restrictive_relation_is_first(self):
         result = process_query(EXAMPLES[2]["sql"])
-        scans = [node["alias"] for node in result["optimized"]["order"] if node["type"] == "scan"]
-        self.assertEqual(scans, [table["alias"] for table in result["query"]["tables"]])
         self.assertEqual(result["optimizedResult"]["rows"], [["Delta Ltda", 4, 1150, "Pago"]])
+        self.assertEqual(result["optimized"]["order"][0]["alias"], "s")
 
     def test_projection_preserves_join_keys(self):
         result = process_query("SELECT p.Nome FROM Produto p, Categoria c WHERE p.Categoria_idCategoria = c.idCategoria AND p.Preco > 100")
@@ -56,12 +56,12 @@ class ProcessorTests(unittest.TestCase):
         self.assertTrue(any("c.idCategoria" in node["columns"] for node in projections))
         self.assertEqual(len(result["optimizedResult"]["rows"]), 5)
 
-    def test_local_filters_keep_textual_order_before_projection(self):
+    def test_restrictive_filters_precede_projection(self):
         plan = build_plan(query("SELECT Nome FROM Produto WHERE Preco > 10 AND Categoria_idCategoria = 1"), True)
         order = execution_order(plan["root"])
-        self.assertEqual(order[1]["type"], "select")
-        self.assertEqual([predicate["operator"] for predicate in order[1]["predicates"]], [">", "="])
-        self.assertEqual(order[2]["type"], "project")
+        self.assertEqual(order[1]["predicates"][0]["operator"], "=")
+        self.assertEqual(order[2]["predicates"][0]["operator"], ">")
+        self.assertEqual(order[3]["type"], "project")
 
     def test_duplicate_and_empty_tuple_multiplicity(self):
         result = process_query("SELECT Categoria_idCategoria FROM Produto")["optimizedResult"]

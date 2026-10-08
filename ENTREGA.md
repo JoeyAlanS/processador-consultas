@@ -1,10 +1,10 @@
-# Guia da entrega 3 — 22/10/2026
+# Guia da entrega 4 — 27/10/2026
 
-Branch: `codex/entrega-3-2026-10-22`. Esta é uma versão cumulativa organizada conforme o cronograma fornecido. O prazo identifica a entrega acadêmica; o Git registra a data real dos commits. A base já continha o projeto completo, por isso a primeira branch recorta a etapa inicial e as seguintes acrescentam os recursos em sequência.
+Branch: `codex/entrega-4-2026-10-27`. Esta é uma versão cumulativa organizada conforme o cronograma fornecido. O prazo identifica a entrega acadêmica; o Git registra a data real dos commits. A base já continha o projeto completo, por isso a primeira branch recorta a etapa inicial e as seguintes acrescentam os recursos em sequência.
 
 ## O que está pronto
 
-Acrescenta antecipação de seleção e projeção. O grafo otimizado filtra cada tabela antes das combinações e conserva apenas os campos necessários depois dos filtros. A ordem das relações, a ordem textual dos filtros e os produtos cartesianos do SQL continuam preservados. Executa os dois planos em memória para verificar as transformações.
+Completa as heurísticas: prioriza filtros mais restritivos, inicia pela relação com menor cardinalidade estimada, escolhe as próximas relações por conexão e estimativa e substitui produtos cartesianos seguidos de predicados entre tabelas por junções. Inclui execução, métricas e verificação da equivalência dos resultados.
 
 | Prazo | Requisito | Situação nesta branch |
 | --- | --- | --- |
@@ -14,7 +14,7 @@ Acrescenta antecipação de seleção e projeção. O grafo otimizado filtra cad
 | 20/10/2026 | Conversão para álgebra relacional | Disponível |
 | 20/10/2026 | Grafo não otimizado | Disponível |
 | 22/10/2026 | Heurísticas de projeção e seleção | Disponível |
-| 27/10/2026 | Demais heurísticas | Etapa futura |
+| 27/10/2026 | Demais heurísticas | Disponível |
 
 ## Como a entrada é processada
 
@@ -61,25 +61,26 @@ As projeções preservam duplicatas, como SELECT sem DISTINCT. Mesmo uma projeç
 
 Cada plano tem limites de 50.000 tuplas intermediárias e 500.000 unidades de trabalho. Trabalho conta visitas a linhas e pares testados. Células materializadas somam tuplas × atributos de cada operador, inclusive a saída; não representam tempo de execução. A otimização não promete reduzir o custo de toda consulta.
 
-## Mudanças em relação à entrega 2
+## Mudanças em relação à entrega 3
 
-- `build_plan(..., optimized=True)` acrescenta somente seleção e projeção antecipadas.
-- Os filtros locais mantêm sua ordem textual, sem ordenação por seletividade.
-- As tabelas continuam na ordem do SQL. Predicados entre tabelas no WHERE continuam acima das combinações, mantendo `×` nesta etapa.
-- Introduz `consulta/executor.py`, a comparação dos resultados, métricas, abas de execução/resultados e exportação CSV como apoio à validação das transformações.
-- Os testes incluem resultados conhecidos, chaves preservadas, duplicatas, tuplas vazias, limites, NULL, tipos e 100 consultas comparadas com uma referência independente.
+1. Os predicados locais são separados em seleções e ordenados pelo fator de restrição. Uma igualdade usa 0,10 e passa antes de uma comparação de faixa com fator 0,33.
+2. O plano começa pela relação com menor cardinalidade estimada depois dos filtros, usando a posição original para desempatar.
+3. Para cada relação restante, calcula as condições entre ela e as relações já processadas. Prioriza candidatos conectados; entre eles, escolhe o menor resultado estimado e usa a posição original para desempatar.
+4. Predicados entre tabelas do ON e do WHERE passam a condições de junção. Isso transforma `σ[p.chave = c.chave](p × c)` em uma junção, evitando materializar previamente todas as combinações.
+5. Produtos cartesianos permanecem quando não existe condição ligando uma relação às demais. Predicados constantes e a projeção final são preservados.
+6. As notas do plano explicam cada decisão. Testes específicos comprovam a ordem dos filtros, a relação inicial mais restritiva e a substituição de produtos cartesianos.
 
-## O que entra apenas na entrega 4
+O cálculo é heurístico: não consulta estatísticas reais do MySQL nem implementa uma busca exaustiva de planos por custo. A escolha considera conexão e cardinalidade estimada. O executor mede os resultados efetivos para comparação.
 
-Ordenar filtros por restrição estimada, reordenar relações e converter produtos cartesianos com predicados entre tabelas em junções. Para demonstrar a diferença, use os exemplos Junção no WHERE e Pedidos por cliente nas duas branches.
+Esta etapa recupera todos os recursos funcionais da versão completa já existente na main, com título, cronograma e documentação identificando a entrega final.
 
 ## Roteiro de apresentação
 
-1. Carregue **Produtos e categorias** e use **Comparar** no grafo.
-2. Observe `σ` e `π` próximos às leituras: os filtros precedem a projeção local e os campos de junção permanecem.
-3. Abra **Plano de execução** e **Resultados** para conferir tuplas, atributos e equivalência.
-4. Carregue **Junção no WHERE**: o plano otimizado ainda conserva `×`; sua conversão entra na entrega 4.
-5. Em **Pedidos por cliente**, confira que a ordem das tabelas segue o SQL.
+1. Carregue **Junção no WHERE** e compare os grafos: `×` seguido de condição entre tabelas é substituído por `⋈`.
+2. Carregue **Pedidos por cliente**: a tabela filtrada mais restritiva deve iniciar o plano.
+3. Teste `SELECT Nome FROM Produto WHERE Preco > 10 AND Categoria_idCategoria = 1`: a igualdade passa a ser aplicada primeiro pela estimativa.
+4. Confira a ordem dos operadores e as métricas em **Plano de execução**.
+5. Confira a equivalência em **Resultados** e exporte o CSV ou a análise JSON.
 
 ## Validação
 
