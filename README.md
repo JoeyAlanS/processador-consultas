@@ -1,6 +1,6 @@
-# Processador de Consultas — entrega 1
+# Processador de Consultas — entrega 2
 
-**Prazo: 15/10/2026 · branch `codex/entrega-1-2026-10-15`.** Interface gráfica funcional, análise da string SQL e validação de campos e comandos. Esta versão devolve tokens e a estrutura validada; não constrói planos nem executa dados.
+**Prazo: 20/10/2026 · branch `codex/entrega-2-2026-10-20`.** Acrescenta conversão para álgebra relacional e grafo não otimizado. Mantém a ordem das tabelas e aplica WHERE após as combinações. Esta versão constrói o plano; a execução comparativa entra na próxima etapa.
 
 A lógica SQL é inteiramente em **Python**. HTML/CSS/JavaScript apresentam a interface e os dados calculados pelo backend. O código desta branch corresponde à etapa indicada; cada entrega acumula os recursos anteriores.
 
@@ -9,7 +9,7 @@ A lógica SQL é inteiramente em **Python**. HTML/CSS/JavaScript apresentam a in
 Requer Python 3.10 ou superior, apenas com a biblioteca padrão. Não é necessário instalar pacotes, Node.js ou MySQL.
 
 ```powershell
-git switch codex/entrega-1-2026-10-15
+git switch codex/entrega-2-2026-10-20
 python server.py
 ```
 
@@ -19,15 +19,14 @@ Abra http://localhost:3000. No Windows, use também `.\iniciar.cmd`. O iniciador
 python -B -m unittest discover -s tests -v
 ```
 
-Alternativa Windows: `.\testar.cmd`. Esta etapa foi verificada com **17 testes**, além da sintaxe da interface e da verificação do diff.
+Alternativa Windows: `.\testar.cmd`. Esta etapa foi verificada com **19 testes**, além da sintaxe da interface e da verificação do diff.
 
 ## Demonstrar esta entrega
 
-1. Abra o projeto e carregue **Produtos e categorias**.
-2. Na aba **Parser**, confira os tokens, os campos resolvidos e os predicados.
-3. Veja as dez tabelas na aba **Esquema do banco**.
-4. Carregue **Campo inválido** e teste `DELETE FROM Produto`: ambos devem gerar erro com indicação da posição.
-5. Use **Exportar análise** para obter o JSON produzido pelo Python.
+1. Carregue **Produtos e categorias** e abra **Grafo de operadores**.
+2. Confira a expressão de álgebra relacional abaixo do grafo e clique nos operadores para ver os campos.
+3. Carregue **Junção no WHERE**: o grafo deve manter o produto cartesiano `×`, seguido da seleção `σ`.
+4. Confira Parser, Esquema e Entregas; a otimização ainda aparece como etapa futura.
 
 ## Código desta etapa
 
@@ -36,6 +35,7 @@ Alternativa Windows: `.\testar.cmd`. Esta etapa foi verificada com **17 testes**
 | `data/catalog.json` | Dez tabelas do BD_Vendas, registros fictícios e consultas de demonstração |
 | `consulta/schema.py` | Carrega o catálogo e fornece metadados à interface |
 | `consulta/parser.py` | Tokenização com posições, parser, AST e validação semântica |
+| `consulta/planner.py` | Constrói os operadores, o grafo e a expressão relacional |
 | `consulta/processor.py` | Coordena os recursos disponíveis nesta entrega |
 | `server.py` | Servidor HTTP local e API JSON em Python |
 | `index.html / styles.css / app.js` | Editor, navegação e apresentação dos dados recebidos do Python |
@@ -51,8 +51,8 @@ O guia [ENTREGA.md](ENTREGA.md) explica o fluxo, os algoritmos, as alterações 
 | 15/10/2026 | Interface gráfica existente e funcional | Disponível |
 | 15/10/2026 | A string é parseada | Disponível |
 | 15/10/2026 | Campos e comandos errados são validados | Disponível |
-| 20/10/2026 | Conversão para álgebra relacional | Etapa futura |
-| 20/10/2026 | Grafo não otimizado | Etapa futura |
+| 20/10/2026 | Conversão para álgebra relacional | Disponível |
+| 20/10/2026 | Grafo não otimizado | Disponível |
 | 22/10/2026 | Heurísticas de projeção e seleção | Etapa futura |
 | 27/10/2026 | Demais heurísticas | Etapa futura |
 
@@ -61,7 +61,7 @@ O guia [ENTREGA.md](ENTREGA.md) explica o fluxo, os algoritmos, as alterações 
 | Entrega | Prazo | Situação | Branch |
 | --- | --- | --- | --- |
 | 1 | 15/10/2026 | Disponível | [codex/entrega-1-2026-10-15](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-1-2026-10-15) |
-| 2 | 20/10/2026 | Etapa futura | [codex/entrega-2-2026-10-20](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-2-2026-10-20) |
+| 2 | 20/10/2026 | Disponível | [codex/entrega-2-2026-10-20](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-2-2026-10-20) |
 | 3 | 22/10/2026 | Etapa futura | [codex/entrega-3-2026-10-22](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-3-2026-10-22) |
 | 4 | 27/10/2026 | Etapa futura | [codex/entrega-4-2026-10-27](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-4-2026-10-27) |
 
@@ -81,8 +81,8 @@ Erros de consulta retornam HTTP 422 com mensagem, posição, linha e coluna. A A
 from consulta import process_query
 
 analise = process_query("SELECT Nome FROM Produto WHERE Preco > 200")
-print(analise["query"]["columns"])
-print(analise["query"]["predicateLabels"])
+print(analise["algebra"]["original"])
+print(analise["original"]["order"])
 ```
 
 O script `sql/bd-vendas.sql` cria as dez tabelas com chaves no MySQL. Seu uso é opcional; não há conexão automática com o banco. Os dados do projeto são fictícios.

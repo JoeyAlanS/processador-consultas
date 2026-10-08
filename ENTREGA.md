@@ -1,18 +1,18 @@
-# Guia da entrega 1 — 15/10/2026
+# Guia da entrega 2 — 20/10/2026
 
-Branch: `codex/entrega-1-2026-10-15`. Esta é uma versão cumulativa organizada conforme o cronograma fornecido. O prazo identifica a entrega acadêmica; o Git registra a data real dos commits. A base já continha o projeto completo, por isso a primeira branch recorta a etapa inicial e as seguintes acrescentam os recursos em sequência.
+Branch: `codex/entrega-2-2026-10-20`. Esta é uma versão cumulativa organizada conforme o cronograma fornecido. O prazo identifica a entrega acadêmica; o Git registra a data real dos commits. A base já continha o projeto completo, por isso a primeira branch recorta a etapa inicial e as seguintes acrescentam os recursos em sequência.
 
 ## O que está pronto
 
-Interface gráfica funcional, análise da string SQL e validação de campos e comandos. Esta versão devolve tokens e a estrutura validada; não constrói planos nem executa dados.
+Acrescenta conversão para álgebra relacional e grafo não otimizado. Mantém a ordem das tabelas e aplica WHERE após as combinações. Esta versão constrói o plano; a execução comparativa entra na próxima etapa.
 
 | Prazo | Requisito | Situação nesta branch |
 | --- | --- | --- |
 | 15/10/2026 | Interface gráfica existente e funcional | Disponível |
 | 15/10/2026 | A string é parseada | Disponível |
 | 15/10/2026 | Campos e comandos errados são validados | Disponível |
-| 20/10/2026 | Conversão para álgebra relacional | Etapa futura |
-| 20/10/2026 | Grafo não otimizado | Etapa futura |
+| 20/10/2026 | Conversão para álgebra relacional | Disponível |
+| 20/10/2026 | Grafo não otimizado | Disponível |
 | 22/10/2026 | Heurísticas de projeção e seleção | Etapa futura |
 | 27/10/2026 | Demais heurísticas | Etapa futura |
 
@@ -29,25 +29,36 @@ Interface gráfica funcional, análise da string SQL e validação de campos e c
 
 Consultas inválidas mostram linha e coluna. O servidor converte a posição Python para UTF-16, que é o índice usado pela seleção do editor no navegador. A entrada tem limite de 20.000 caracteres e 100 níveis de parênteses.
 
-## Mudanças específicas da entrega 1
+## Grafo original e álgebra
 
-- Mantém interface, editor, exemplos, catálogo, exportação JSON, parser e validação em Python.
-- `process_query` devolve somente `query` e `backend`; não gera álgebra nem planos.
-- `consulta/planner.py` e `consulta/executor.py` estão ausentes desta versão.
-- A interface começa em Parser e oferece Esquema e Entregas; não apresenta abas ou resultados de etapas futuras.
-- Os testes verificam o processamento e a API da etapa inicial, inclusive a ausência de planos na resposta.
+`build_plan`, em `consulta/planner.py`, cria nós `scan` (leitura), `join` (junção), `cross` (produto cartesiano), `select` (seleção) e `project` (projeção). Cada nó tem identificador, filhos, campos e estimativa de tuplas.
+
+O plano original lê as tabelas na ordem do SQL. `INNER JOIN … ON` vira `⋈`; tabelas separadas por vírgula produzem `×`. O `WHERE` é aplicado após combinar as relações, e uma projeção final `π` mantém a ordem dos campos pedidos.
+
+`execution_order` faz um percurso iterativo em pós-ordem: filhos antes do pai. `relational_algebra` usa essa ordem para escrever a expressão com `σ`, `π`, `⋈`, `×` e renomeação `ρ`. Os rótulos, símbolos e números dos nós já chegam prontos do Python. `graphSvg`, no JavaScript, apenas calcula posições visuais e desenha o SVG.
+
+Exemplo com uma tabela: `SELECT Nome FROM Produto WHERE Preco > 200` produz `π[Produto.Nome](σ[Produto.Preco > 200](Produto))` no plano original.
+
+As estimativas usam o tamanho da amostra e fatores didáticos: igualdade 0,10; `<>` 0,90; comparações de faixa 0,33. Estimar uma cardinalidade não altera a ordem do plano original e não equivale a uma contagem real.
+
+## Mudanças em relação à entrega 1
+
+- Introduz `consulta/planner.py` com o construtor do plano original, a pós-ordem e a álgebra.
+- `processor.py` passa a devolver `original` e `algebra.original`, além da consulta validada.
+- Acrescenta o grafo SVG, a expressão relacional e a inspeção de operadores na interface.
+- `consulta/executor.py` continua ausente. Não há plano otimizado, reordenação ou execução dos registros.
+- Os testes conferem a posição do WHERE, a preservação de produtos cartesianos, o INNER JOIN e a dependência entre nós.
 
 ## Roteiro de apresentação
 
-1. Abra o projeto e carregue **Produtos e categorias**.
-2. Na aba **Parser**, confira os tokens, os campos resolvidos e os predicados.
-3. Veja as dez tabelas na aba **Esquema do banco**.
-4. Carregue **Campo inválido** e teste `DELETE FROM Produto`: ambos devem gerar erro com indicação da posição.
-5. Use **Exportar análise** para obter o JSON produzido pelo Python.
+1. Carregue **Produtos e categorias** e abra **Grafo de operadores**.
+2. Confira a expressão de álgebra relacional abaixo do grafo e clique nos operadores para ver os campos.
+3. Carregue **Junção no WHERE**: o grafo deve manter o produto cartesiano `×`, seguido da seleção `σ`.
+4. Confira Parser, Esquema e Entregas; a otimização ainda aparece como etapa futura.
 
 ## Validação
 
-Foram executados **17 testes** com `python -B -m unittest discover -s tests -v`. A suite verifica entradas válidas e inválidas, catálogo, aliases, ambiguidade, limites do parser, posições de erro e integração HTTP. A partir da entrega 2 verifica também os operadores e sua ordem; a partir da entrega 3 verifica resultados e equivalência.
+Foram executados **19 testes** com `python -B -m unittest discover -s tests -v`. A suite verifica entradas válidas e inválidas, catálogo, aliases, ambiguidade, limites do parser, posições de erro e integração HTTP. A partir da entrega 2 verifica também os operadores e sua ordem; a partir da entrega 3 verifica resultados e equivalência.
 
 `node --check app.js` verifica a sintaxe da apresentação, sem tornar Node.js uma dependência da aplicação. `git diff --check` verifica o patch. O README contém os comandos para executar a branch, a API e a matriz de requisitos disponíveis e futuros.
 

@@ -50,7 +50,8 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(result["backend"], "Python")
         self.assertEqual(result["query"]["columns"][0]["key"], "Produto.Nome")
         self.assertNotIn("optimizedResult", result)
-        self.assertNotIn("algebra", result)
+        self.assertTrue(result["algebra"]["original"])
+        self.assertTrue(result["original"]["order"])
 
     def test_query_error_has_line_column_and_position(self):
         status, _, body = self.request("POST", "/api/process", {"sql": "SELECT Nome,\nValor FROM Produto"})

@@ -3,6 +3,7 @@ import unittest
 from consulta.parser import QueryError, parse, validate
 from consulta.processor import process_query
 from consulta.schema import EXAMPLES, SAMPLE_DATA, SCHEMA
+from consulta.planner import build_plan, execution_order
 
 
 def query(sql):
@@ -68,6 +69,28 @@ class ProcessorTests(unittest.TestCase):
         result = process_query("SELECT c.*, p.Nome, p.Nome FROM Categoria c INNER JOIN Produto p ON c.idCategoria = p.Categoria_idCategoria")
         self.assertEqual([column["key"] for column in result["query"]["columns"]], ["c.idCategoria", "c.Descricao", "p.Nome", "p.Nome"])
 
-    def test_first_delivery_does_not_build_a_plan(self):
-        result = process_query("SELECT Nome FROM Produto")
-        self.assertEqual(set(result), {"query", "backend"})
+    def test_original_plan_keeps_cross_and_where_above_it(self):
+        result = process_query("SELECT p.Nome FROM Produto p, Categoria c WHERE p.Categoria_idCategoria = c.idCategoria AND p.Preco > 200")
+        nodes = result["original"]["order"]
+        self.assertEqual([node["type"] for node in nodes], ["scan", "scan", "cross", "select", "project"])
+        self.assertEqual([node["alias"] for node in nodes if node["type"] == "scan"], ["p", "c"])
+        self.assertIn("×", result["algebra"]["original"])
+        self.assertIn("σ[p.Categoria_idCategoria = c.idCategoria AND p.Preco > 200]", result["algebra"]["original"])
+        self.assertNotIn("optimized", result)
+
+    def test_inner_join_and_final_projection(self):
+        result = process_query(EXAMPLES[1]["sql"])
+        nodes = result["original"]["order"]
+        self.assertEqual([node["type"] for node in nodes], ["scan", "scan", "join", "select", "project"])
+        self.assertTrue(nodes[-1]["final"])
+        self.assertEqual(nodes[-1]["columns"], [column["key"] for column in result["query"]["columns"]])
+        self.assertIn("⋈", result["algebra"]["original"])
+
+    def test_original_plan_dependencies_and_labels(self):
+        nodes = process_query(EXAMPLES[2]["sql"])["original"]["order"]
+        positions = {node["id"]: index for index, node in enumerate(nodes)}
+        for step, node in enumerate(nodes, 1):
+            self.assertEqual(node["step"], step)
+            self.assertTrue(node["label"])
+            for child in node["children"]:
+                self.assertLess(positions[child["id"]], positions[node["id"]])

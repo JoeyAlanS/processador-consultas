@@ -6,7 +6,7 @@ const number = value => value.toLocaleString('pt-BR', { maximumFractionDigits: 2
 const formatEstimate = number;
 const nodeLabel = node => node.label;
 let schema = {}, sampleCounts = {}, examples = [], requestSequence = 0;
-let analysis = null, activeTab = 'parser', planMode = 'original', selectedTable = null, lastSql = '';
+let analysis = null, activeTab = 'graph', planMode = 'original', selectedTable = null, lastSql = '';
 
 $('#table-nav').addEventListener('click', event => {
   const button = event.target.closest('[data-table]');
@@ -38,7 +38,7 @@ async function run() {
     if (request !== requestSequence) return;
     analysis = result;
     lastSql = sql;
-    $('#status').textContent = '✓ Consulta válida · análise sintática e semântica concluída.';
+    $('#status').textContent = '✓ Consulta válida · álgebra relacional e grafo original construídos.';
     $('.pipeline-card').classList.add('complete');
     const changed = $('#sql').value !== sql;
     $('#export').disabled = changed;
@@ -108,8 +108,8 @@ $('.tabs').addEventListener('keydown', event => {
 function renderMetrics() {
   const metrics = [
     ['Tabelas consultadas', analysis.query.tables.length, '', 'Referências resolvidas no catálogo'],
-    ['Campos de saída', analysis.query.columns.length, '', 'Campos e aliases validados'],
-    ['Tokens', analysis.query.tokens.length, '', 'Componentes da string SQL'],
+    ['Operações no grafo', analysis.original.order.length, '', 'Plano original, sem heurísticas'],
+    ['Atributos de saída', analysis.original.root.width, '', 'Campos solicitados no SELECT'],
     ['Predicados', analysis.query.predicateLabels.length, '', 'Condições de ON e WHERE'],
   ];
   $('#metrics').innerHTML = metrics.map(([label, value, change, description]) => `<div class="metric"><span class="metric-label">${label}</span><span class="metric-value">${number(value)}<small>${change}</small></span><span class="metric-foot">${description}</span></div>`).join('');
@@ -122,8 +122,61 @@ function renderPanel() {
   if (activeTab === 'schema') return renderSchema();
   if (activeTab === 'deliveries') return renderDeliveries();
   if (!analysis) { $('#panel').innerHTML = '<div class="empty">Insira uma consulta válida para explorar sua análise.</div>'; return; }
-  if (activeTab === 'parser') renderParser();
+  if (activeTab === 'graph') renderGraph();
+  else if (activeTab === 'parser') renderParser();
 }
+
+function wrap(text, max = 34) {
+  const lines = [];
+  let line = '';
+  for (const word of text.split(/\s+/)) {
+    if (word.length > max) {
+      if (line) { lines.push(line); line = ''; }
+      for (let offset = 0; offset < word.length; offset += max) lines.push(word.slice(offset, offset + max));
+    } else if (line.length + word.length + 1 > max) { lines.push(line); line = word; }
+    else line += (line ? ' ' : '') + word;
+  }
+  if (line) lines.push(line);
+  return lines.length > 4 ? [...lines.slice(0, 3), lines[3].slice(0, max - 1) + '…'] : lines;
+}
+function graphSvg(plan, mode) {
+  const nodes = [], edges = [];
+  let leaf = 0;
+  const order = new Map(plan.order.map(node => [node.id, node.step]));
+  const nodeWidth = 270, stride = 302;
+  function layout(node, y) {
+    const lines = wrap(nodeLabel(node));
+    const height = 61 + lines.length * 14;
+    const children = node.children.map(child => layout(child, y + height + 38));
+    const x = children.length ? children.reduce((sum, child) => sum + child.x, 0) / children.length : 22 + nodeWidth / 2 + leaf++ * stride;
+    const positioned = { node, x, y, height, lines }; nodes.push(positioned);
+    children.forEach(child => edges.push({ from: child, to: positioned }));
+    return positioned;
+  }
+  layout(plan.root, 24);
+  const width = Math.max(314, leaf * stride + 12);
+  const height = Math.max(...nodes.map(node => node.y + node.height)) + 24;
+  const edgeMarkup = edges.map(({ from, to }) => `<path d="M ${from.x} ${from.y} L ${from.x} ${from.y - 19} L ${to.x} ${from.y - 19} L ${to.x} ${to.y + to.height + 3}" fill="none" stroke="#b7bdcf" stroke-width="1.5" marker-end="url(#arrow-${mode})"/>`).join('');
+  const nodeMarkup = nodes.map(({ node, x, y, height, lines }) => {
+    const color = node.type === 'select' ? '#198f79' : node.type === 'scan' ? '#6084b5' : node.type === 'cross' ? '#b87a36' : '#7a66ce';
+    return `<g class="graph-node" role="button" tabindex="0" aria-label="${escape(node.name + ': ' + nodeLabel(node))}" data-node="${node.id}" data-plan="${mode}"><title>${escape(nodeLabel(node))}</title><rect x="${x - nodeWidth / 2}" y="${y}" width="${nodeWidth}" height="${height}" rx="8" fill="#fff" stroke="#dfe2ed"/><rect x="${x - nodeWidth / 2}" y="${y}" width="4" height="${height}" rx="2" fill="${color}"/><text x="${x - 117}" y="${y + 23}" fill="${color}" font-family="Georgia,serif" font-size="18">${node.symbol}</text><text x="${x - 91}" y="${y + 22}" fill="#56617a" font-size="10" font-weight="600">${node.name}</text><rect x="${x + 103}" y="${y + 9}" width="23" height="19" rx="4" fill="#f4f2fb"/><text x="${x + 114.5}" y="${y + 22}" text-anchor="middle" fill="#8d7aba" font-size="9">${order.get(node.id)}</text>${lines.map((line, index) => `<text x="${x - 115}" y="${y + 43 + index * 14}" fill="#5f6981" font-family="Consolas,monospace" font-size="10">${escape(line)}</text>`).join('')}<text x="${x - 115}" y="${y + height - 11}" fill="#a0a8ba" font-size="9">≈ ${formatEstimate(node.estimatedRows)} tuplas · ${node.width} atributos</text></g>`;
+  }).join('');
+  return `<div class="graph-stage"><svg viewBox="0 0 ${width} ${height}" role="group" aria-label="Grafo ${mode === 'optimized' ? 'otimizado' : 'original'}, fluxo de baixo para cima" style="min-width:${Math.max(314, leaf * 245 + 12)}px" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrow-${mode}" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M 0 0 L 7 3.5 L 0 7 Z" fill="#b7bdcf"/></marker></defs>${edgeMarkup}${nodeMarkup}</svg><div class="legend"><span><i></i>Projeção / junção</span><span><i class="teal"></i>Seleção</span><span><i class="blue"></i>Tabela</span><span>↑ Fluxo dos resultados · números = ordem de execução</span></div></div>`;
+}
+function renderGraph() {
+  const plan = analysis.original;
+  $('#panel').innerHTML = heading('Grafo não otimizado', 'As tabelas seguem a ordem do SQL; o WHERE é aplicado depois das combinações.') + graphSvg(plan, 'original') + `<div id="node-details" class="node-details" hidden></div><div class="algebra"><h3>ÁLGEBRA RELACIONAL · ORIGINAL</h3><code>${escape(analysis.algebra.original)}</code></div><p class="note">As setas mostram o fluxo das relações. Os números indicam a dependência entre operadores; ≈ representa uma estimativa didática. Esta etapa constrói o plano e não executa registros.</p>`;
+  $('#panel').querySelectorAll('[data-node]').forEach(element => {
+    function inspect() {
+      const node = plan.order.find(node => node.id === element.dataset.node);
+      $('#node-details').hidden = false;
+      $('#node-details').innerHTML = `<strong>${node.symbol} ${node.name}</strong> · ${escape(node.label)}<br>Atributos: ${escape(node.columns.join(', '))}<br>Estimativa: ${formatEstimate(node.estimatedRows)} tuplas.`;
+    }
+    element.addEventListener('click', inspect);
+    element.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); inspect(); } });
+  });
+}
+
 
 function renderParser() {
   const query = analysis.query;
@@ -143,7 +196,7 @@ function renderDeliveries() {
     [3, '22/10/2026', 'Heurísticas de projeção e seleção', 'Filtros e redução de atributos antecipados'],
     [4, '27/10/2026', 'Demais heurísticas', 'Seletividade, ordem das relações e conversão de produto em junção'],
   ];
-  $('#panel').innerHTML = heading('Cronograma de entregas · etapa 1', 'Prazos de Entregáveis.pdf · esta branch inclui os requisitos até 15/10/2026.') + `<div class="table-wrap"><table><thead><tr><th>Prazo</th><th>Requisito</th><th>Descrição</th><th>Situação nesta branch</th></tr></thead><tbody>${deliveries.map(([delivery, date, title, description]) => `<tr><td class="delivery-date">${date}</td><td>${title}</td><td>${description}</td><td><span class="badge">${delivery <= 1 ? 'Disponível' : 'Etapa futura'}</span></td></tr>`).join('')}</tbody></table></div><p class="note">Disponível indica implementação nesta branch. A entrega à disciplina deve ser realizada pela equipe. Penalidade indicada no documento: −1 por item.</p>`;
+  $('#panel').innerHTML = heading('Cronograma de entregas · etapa 2', 'Prazos de Entregáveis.pdf · esta branch inclui os requisitos até 20/10/2026.') + `<div class="table-wrap"><table><thead><tr><th>Prazo</th><th>Requisito</th><th>Descrição</th><th>Situação nesta branch</th></tr></thead><tbody>${deliveries.map(([delivery, date, title, description]) => `<tr><td class="delivery-date">${date}</td><td>${title}</td><td>${description}</td><td><span class="badge">${delivery <= 2 ? 'Disponível' : 'Etapa futura'}</span></td></tr>`).join('')}</tbody></table></div><p class="note">Disponível indica implementação nesta branch. A entrega à disciplina deve ser realizada pela equipe. Penalidade indicada no documento: −1 por item.</p>`;
 }
 
 async function initialize() {
