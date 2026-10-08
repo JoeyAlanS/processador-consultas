@@ -6,7 +6,7 @@ const number = value => value.toLocaleString('pt-BR', { maximumFractionDigits: 2
 const formatEstimate = number;
 const nodeLabel = node => node.label;
 let schema = {}, sampleCounts = {}, examples = [], requestSequence = 0;
-let analysis = null, activeTab = 'graph', planMode = 'original', selectedTable = null, lastSql = '';
+let analysis = null, activeTab = 'graph', planMode = 'optimized', selectedTable = null, lastSql = '';
 
 $('#table-nav').addEventListener('click', event => {
   const button = event.target.closest('[data-table]');
@@ -38,7 +38,7 @@ async function run() {
     if (request !== requestSequence) return;
     analysis = result;
     lastSql = sql;
-    $('#status').textContent = '✓ Consulta válida · álgebra relacional e grafo original construídos.';
+    $('#status').textContent = analysis.verified ? '✓ Consulta válida · planos executados com resultados equivalentes.' : '✓ Consulta válida · plano otimizado executado. O plano original excedeu o limite didático.';
     $('.pipeline-card').classList.add('complete');
     const changed = $('#sql').value !== sql;
     $('#export').disabled = changed;
@@ -106,24 +106,32 @@ $('.tabs').addEventListener('keydown', event => {
   switchTab(buttons[next].dataset.tab); buttons[next].focus();
 });
 function renderMetrics() {
+  const original = analysis.originalResult, optimized = analysis.optimizedResult;
+  const saving = original?.cells ? Math.round((1 - optimized.cells / original.cells) * 100) : null;
   const metrics = [
-    ['Tabelas consultadas', analysis.query.tables.length, '', 'Referências resolvidas no catálogo'],
-    ['Operações no grafo', analysis.original.order.length, '', 'Plano original, sem heurísticas'],
-    ['Atributos de saída', analysis.original.root.width, '', 'Campos solicitados no SELECT'],
-    ['Predicados', analysis.query.predicateLabels.length, '', 'Condições de ON e WHERE'],
+    ['Tabelas consultadas', analysis.query.tables.length, '', 'Validadas no catálogo BD_Vendas'],
+    ['Operações no plano', analysis.optimized.order.length, '', 'Leitura, filtros, projeções e junções'],
+    ['Tuplas no resultado', optimized.rows.length, '', analysis.verified ? 'Equivalência verificada entre os planos' : 'Plano original excedeu o limite'],
+    ['Células intermediárias', optimized.cells, saving === null ? '' : `${saving >= 0 ? '↓' : '↑'} ${Math.abs(saving)}%`, original ? `${number(original.cells)} no plano original · inclui a saída` : 'Soma de tuplas × atributos em cada operação'],
   ];
   $('#metrics').innerHTML = metrics.map(([label, value, change, description]) => `<div class="metric"><span class="metric-label">${label}</span><span class="metric-value">${number(value)}<small>${change}</small></span><span class="metric-foot">${description}</span></div>`).join('');
 }
 function heading(title, subtitle, controls = '') {
   return `<div class="panel-heading"><div><h2>${title}</h2><p>${subtitle}</p></div>${controls}</div>`;
 }
-
+function modeControls(compare = false) {
+  const modes = [['optimized', 'Otimizado'], ['original', 'Original'], ...(compare ? [['compare', 'Comparar']] : [])];
+  return `<div class="segmented" aria-label="Plano exibido">${modes.map(([mode, label]) => `<button data-mode="${mode}" class="${planMode === mode ? 'active' : ''}" aria-pressed="${planMode === mode}">${label}</button>`).join('')}</div>`;
+}
 function renderPanel() {
   if (activeTab === 'schema') return renderSchema();
   if (activeTab === 'deliveries') return renderDeliveries();
   if (!analysis) { $('#panel').innerHTML = '<div class="empty">Insira uma consulta válida para explorar sua análise.</div>'; return; }
   if (activeTab === 'graph') renderGraph();
+  else if (activeTab === 'plan') renderExecution();
+  else if (activeTab === 'result') renderResults();
   else if (activeTab === 'parser') renderParser();
+  $('#panel').querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => { planMode = button.dataset.mode; renderPanel(); }));
 }
 
 function wrap(text, max = 34) {
@@ -164,20 +172,48 @@ function graphSvg(plan, mode) {
   return `<div class="graph-stage"><svg viewBox="0 0 ${width} ${height}" role="group" aria-label="Grafo ${mode === 'optimized' ? 'otimizado' : 'original'}, fluxo de baixo para cima" style="min-width:${Math.max(314, leaf * 245 + 12)}px" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrow-${mode}" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M 0 0 L 7 3.5 L 0 7 Z" fill="#b7bdcf"/></marker></defs>${edgeMarkup}${nodeMarkup}</svg><div class="legend"><span><i></i>Projeção / junção</span><span><i class="teal"></i>Seleção</span><span><i class="blue"></i>Tabela</span><span>↑ Fluxo dos resultados · números = ordem de execução</span></div></div>`;
 }
 function renderGraph() {
-  const plan = analysis.original;
-  $('#panel').innerHTML = heading('Grafo não otimizado', 'As tabelas seguem a ordem do SQL; o WHERE é aplicado depois das combinações.') + graphSvg(plan, 'original') + `<div id="node-details" class="node-details" hidden></div><div class="algebra"><h3>ÁLGEBRA RELACIONAL · ORIGINAL</h3><code>${escape(analysis.algebra.original)}</code></div><p class="note">As setas mostram o fluxo das relações. Os números indicam a dependência entre operadores; ≈ representa uma estimativa didática. Esta etapa constrói o plano e não executa registros.</p>`;
+  const mode = planMode === 'compare' ? 'optimized' : planMode;
+  let content = heading('Estratégia de execução', 'Clique em um operador para inspecionar seu predicado e seus atributos.', modeControls(true));
+  if (planMode === 'compare') {
+    content += `<div class="comparison"><div><h3>Plano original</h3>${graphSvg(analysis.original, 'original')}</div><div><h3>Plano otimizado</h3>${graphSvg(analysis.optimized, 'optimized')}</div></div>`;
+  } else {
+    content += `<div class="graph-layout">${graphSvg(analysis[mode], mode)}<aside class="insights"><span class="badge">${mode === 'optimized' ? 'Heurísticas aplicadas' : 'Antes da otimização'}</span><h3 style="margin-top:17px">Menos dados, mais cedo.</h3><p>Estimativas orientam o plano; os resultados são medidos na execução.</p>${(analysis[mode].notes).map((note, index) => `<div class="insight"><span>${String(index + 1).padStart(2, '0')} · ${index === 0 ? 'Estratégia' : 'Transformação'}</span>${escape(note)}</div>`).join('')}</aside></div>`;
+  }
+  content += `<div id="node-details" class="node-details" hidden></div><div class="algebra"><h3>ÁLGEBRA RELACIONAL · ${mode === 'optimized' ? 'OTIMIZADA' : 'ORIGINAL'}</h3><code>${escape(analysis.algebra[mode])}</code></div><p class="note">π preserva duplicatas, como SELECT sem DISTINCT. Cardinalidades com ≈ são estimativas heurísticas; a aba Plano de execução mostra as contagens reais.</p>`;
+  $('#panel').innerHTML = content;
   $('#panel').querySelectorAll('[data-node]').forEach(element => {
     function inspect() {
-      const node = plan.order.find(node => node.id === element.dataset.node);
+      const node = analysis[element.dataset.plan].order.find(node => node.id === element.dataset.node);
+      const measured = analysis[element.dataset.plan + 'Result']?.trace.find(step => step.nodeId === node.id);
       $('#node-details').hidden = false;
-      $('#node-details').innerHTML = `<strong>${node.symbol} ${node.name}</strong> · ${escape(node.label)}<br>Atributos: ${escape(node.columns.join(', '))}<br>Estimativa: ${formatEstimate(node.estimatedRows)} tuplas.`;
+      $('#node-details').innerHTML = `<strong>${node.symbol} ${node.name}</strong> · ${escape(nodeLabel(node))}<br>Atributos: ${escape(node.columns.join(', ') || 'tupla vazia')}<br>${measured ? `${measured.rows} tuplas reais · ${measured.width} atributos` : 'Execução original não concluída'} · estimativa: ${formatEstimate(node.estimatedRows)} tuplas.`;
     }
     element.addEventListener('click', inspect);
     element.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); inspect(); } });
   });
 }
-
-
+function renderExecution() {
+  if (planMode === 'compare') planMode = 'optimized';
+  const plan = analysis[planMode], result = analysis[planMode + 'Result'];
+  const rows = plan.order.map((node, index) => {
+    const step = result?.trace.find(step => step.nodeId === node.id);
+    return `<tr><td><span class="step-number">${index + 1}</span></td><td>${node.symbol} ${node.name}</td><td><code>${escape(nodeLabel(node))}</code></td><td>${step?.inputRows.join(' + ') || '—'}</td><td>${step ? number(step.rows) : '—'}</td><td>${node.width}</td><td>≈ ${formatEstimate(node.estimatedRows)}</td></tr>`;
+  }).join('');
+  $('#panel').innerHTML = heading('Plano de execução', 'Percurso em pós-ordem: os filhos são executados antes do operador pai.', modeControls()) + `<div class="table-wrap"><table><thead><tr><th>Ordem</th><th>Operação</th><th>Tabela / expressão</th><th>Tuplas de entrada</th><th>Tuplas de saída</th><th>Atributos</th><th>Estimativa</th></tr></thead><tbody>${rows}</tbody></table></div><p class="note">${result ? `${number(result.work)} unidades de trabalho medidas (linhas visitadas / pares testados). ${number(result.cells)} células materializadas ao longo do plano.` : escape(analysis.originalError)}<br>Estimativas: igualdade × 0,10; desigualdade (&lt;&gt;) × 0,90; comparações de faixa × 0,33. Não são estatísticas de um SGBD.</p>`;
+}
+function renderResults() {
+  const result = analysis.optimizedResult;
+  $('#panel').innerHTML = heading('Resultado da consulta', 'Dados fictícios do BD_Vendas · consulta executada em memória.', '<button id="csv" class="button secondary">↓ Exportar CSV</button>') + `<p class="result-info"><span class="badge">${number(result.rows.length)} ${result.rows.length === 1 ? 'tupla' : 'tuplas'} · ${result.columns.length} atributos</span>${analysis.verified ? '<span>✓ Mesmo resultado nos dois planos</span>' : '<span>Plano original excedeu o limite; equivalência não verificada</span>'}</p><div class="table-wrap"><table><thead><tr>${result.columns.map(column => `<th>${escape(column)}</th>`).join('')}</tr></thead><tbody>${result.rows.length ? result.rows.map(row => `<tr>${row.map(value => `<td>${value === null ? '<span class="null">NULL</span>' : escape(value)}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${result.columns.length}" class="empty">Nenhuma tupla satisfaz os predicados.</td></tr>`}</tbody></table></div><p class="note">A ordem das tuplas pode mudar entre os planos; ORDER BY não faz parte do subconjunto suportado. Comparações com NULL não passam pelo filtro.</p>`;
+  $('#csv').addEventListener('click', () => {
+    const cell = value => {
+      let text = value === null ? '' : String(value);
+      // Prevent spreadsheet applications from interpreting exported text as formulas.
+      if (typeof value === 'string' && /^[=+@\-\t\r]/.test(text)) text = "'" + text;
+      return '"' + text.replaceAll('"', '""') + '"';
+    };
+    download('resultado-consulta.csv', '\uFEFF' + [result.columns, ...result.rows].map(row => row.map(cell).join(';')).join('\r\n'), 'text/csv;charset=utf-8');
+  });
+}
 function renderParser() {
   const query = analysis.query;
   const predicates = query.predicateLabels;
@@ -196,7 +232,7 @@ function renderDeliveries() {
     [3, '22/10/2026', 'Heurísticas de projeção e seleção', 'Filtros e redução de atributos antecipados'],
     [4, '27/10/2026', 'Demais heurísticas', 'Seletividade, ordem das relações e conversão de produto em junção'],
   ];
-  $('#panel').innerHTML = heading('Cronograma de entregas · etapa 2', 'Prazos de Entregáveis.pdf · esta branch inclui os requisitos até 20/10/2026.') + `<div class="table-wrap"><table><thead><tr><th>Prazo</th><th>Requisito</th><th>Descrição</th><th>Situação nesta branch</th></tr></thead><tbody>${deliveries.map(([delivery, date, title, description]) => `<tr><td class="delivery-date">${date}</td><td>${title}</td><td>${description}</td><td><span class="badge">${delivery <= 2 ? 'Disponível' : 'Etapa futura'}</span></td></tr>`).join('')}</tbody></table></div><p class="note">Disponível indica implementação nesta branch. A entrega à disciplina deve ser realizada pela equipe. Penalidade indicada no documento: −1 por item.</p>`;
+  $('#panel').innerHTML = heading('Cronograma de entregas · etapa 3', 'Prazos de Entregáveis.pdf · esta branch inclui os requisitos até 22/10/2026.') + `<div class="table-wrap"><table><thead><tr><th>Prazo</th><th>Requisito</th><th>Descrição</th><th>Situação nesta branch</th></tr></thead><tbody>${deliveries.map(([delivery, date, title, description]) => `<tr><td class="delivery-date">${date}</td><td>${title}</td><td>${description}</td><td><span class="badge">${delivery <= 3 ? 'Disponível' : 'Etapa futura'}</span></td></tr>`).join('')}</tbody></table></div><p class="note">Disponível indica implementação nesta branch. A entrega à disciplina deve ser realizada pela equipe. Penalidade indicada no documento: −1 por item.</p>`;
 }
 
 async function initialize() {

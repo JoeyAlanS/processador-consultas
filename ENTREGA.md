@@ -1,10 +1,10 @@
-# Guia da entrega 2 — 20/10/2026
+# Guia da entrega 3 — 22/10/2026
 
-Branch: `codex/entrega-2-2026-10-20`. Esta é uma versão cumulativa organizada conforme o cronograma fornecido. O prazo identifica a entrega acadêmica; o Git registra a data real dos commits. A base já continha o projeto completo, por isso a primeira branch recorta a etapa inicial e as seguintes acrescentam os recursos em sequência.
+Branch: `codex/entrega-3-2026-10-22`. Esta é uma versão cumulativa organizada conforme o cronograma fornecido. O prazo identifica a entrega acadêmica; o Git registra a data real dos commits. A base já continha o projeto completo, por isso a primeira branch recorta a etapa inicial e as seguintes acrescentam os recursos em sequência.
 
 ## O que está pronto
 
-Acrescenta conversão para álgebra relacional e grafo não otimizado. Mantém a ordem das tabelas e aplica WHERE após as combinações. Esta versão constrói o plano; a execução comparativa entra na próxima etapa.
+Acrescenta antecipação de seleção e projeção. O grafo otimizado filtra cada tabela antes das combinações e conserva apenas os campos necessários depois dos filtros. A ordem das relações, a ordem textual dos filtros e os produtos cartesianos do SQL continuam preservados. Executa os dois planos em memória para verificar as transformações.
 
 | Prazo | Requisito | Situação nesta branch |
 | --- | --- | --- |
@@ -13,7 +13,7 @@ Acrescenta conversão para álgebra relacional e grafo não otimizado. Mantém a
 | 15/10/2026 | Campos e comandos errados são validados | Disponível |
 | 20/10/2026 | Conversão para álgebra relacional | Disponível |
 | 20/10/2026 | Grafo não otimizado | Disponível |
-| 22/10/2026 | Heurísticas de projeção e seleção | Etapa futura |
+| 22/10/2026 | Heurísticas de projeção e seleção | Disponível |
 | 27/10/2026 | Demais heurísticas | Etapa futura |
 
 ## Como a entrada é processada
@@ -41,24 +41,49 @@ Exemplo com uma tabela: `SELECT Nome FROM Produto WHERE Preco > 200` produz `π[
 
 As estimativas usam o tamanho da amostra e fatores didáticos: igualdade 0,10; `<>` 0,90; comparações de faixa 0,33. Estimar uma cardinalidade não altera a ordem do plano original e não equivale a uma contagem real.
 
-## Mudanças em relação à entrega 1
+## Seleção e projeção antecipadas
 
-- Introduz `consulta/planner.py` com o construtor do plano original, a pós-ordem e a álgebra.
-- `processor.py` passa a devolver `original` e `algebra.original`, além da consulta validada.
-- Acrescenta o grafo SVG, a expressão relacional e a inspeção de operadores na interface.
-- `consulta/executor.py` continua ausente. Não há plano otimizado, reordenação ou execução dos registros.
-- Os testes conferem a posição do WHERE, a preservação de produtos cartesianos, o INNER JOIN e a dependência entre nós.
+O otimizador separa predicados que referenciam uma tabela dos que relacionam duas ou mais. Predicados locais são aplicados logo após a leitura da tabela. Isso também vale para predicados locais do `ON`, pois as junções suportadas são internas.
+
+Depois dos filtros locais, uma projeção conserva os campos do `SELECT` e todos os atributos ainda necessários para comparar tabelas. Um campo usado apenas num filtro local pode ser descartado depois do filtro. A projeção final reaplica a lista do `SELECT` na ordem correta.
+
+Por exemplo, em `SELECT p.Nome FROM Produto p, Categoria c WHERE p.Categoria_idCategoria = c.idCategoria AND p.Preco > 200`, a seleção de preço desce até Produto. A projeção local de Produto conserva `p.Nome` e `p.Categoria_idCategoria`; a de Categoria conserva `c.idCategoria`. A chave não pode ser removida antes de testar a condição entre as tabelas.
+
+As projeções preservam duplicatas, como SELECT sem DISTINCT. Mesmo uma projeção sem atributos mantém uma tupla vazia para cada linha de entrada, conservando a multiplicidade necessária em produtos cartesianos.
+
+## Execução e comparação
+
+`execute`, em `consulta/executor.py`, percorre os operadores em pós-ordem, qualifica os campos das leituras, aplica predicados, projeta colunas e combina pares em junções ou produtos. Retorna linhas, colunas e `trace` com entradas, saídas e largura de cada operador. Resultados intermediários dos filhos são liberados após o uso.
+
+`evaluate` aplica as comparações: números inteiros e decimais pertencem ao mesmo tipo; comparar texto com número gera erro; comparações com NULL não passam pelo filtro. Os dados de demonstração são executados em memória.
+
+`equivalent` compara as colunas e um contador de tuplas. A ordem das linhas pode mudar, mas a quantidade de cada tupla deve permanecer igual. `processor.py` executa os planos original e otimizado e marca `verified` quando os resultados são equivalentes. Falha do plano original por limite de recursos não descarta uma execução otimizada válida; nesse caso informa que a equivalência não foi verificada.
+
+Cada plano tem limites de 50.000 tuplas intermediárias e 500.000 unidades de trabalho. Trabalho conta visitas a linhas e pares testados. Células materializadas somam tuplas × atributos de cada operador, inclusive a saída; não representam tempo de execução. A otimização não promete reduzir o custo de toda consulta.
+
+## Mudanças em relação à entrega 2
+
+- `build_plan(..., optimized=True)` acrescenta somente seleção e projeção antecipadas.
+- Os filtros locais mantêm sua ordem textual, sem ordenação por seletividade.
+- As tabelas continuam na ordem do SQL. Predicados entre tabelas no WHERE continuam acima das combinações, mantendo `×` nesta etapa.
+- Introduz `consulta/executor.py`, a comparação dos resultados, métricas, abas de execução/resultados e exportação CSV como apoio à validação das transformações.
+- Os testes incluem resultados conhecidos, chaves preservadas, duplicatas, tuplas vazias, limites, NULL, tipos e 100 consultas comparadas com uma referência independente.
+
+## O que entra apenas na entrega 4
+
+Ordenar filtros por restrição estimada, reordenar relações e converter produtos cartesianos com predicados entre tabelas em junções. Para demonstrar a diferença, use os exemplos Junção no WHERE e Pedidos por cliente nas duas branches.
 
 ## Roteiro de apresentação
 
-1. Carregue **Produtos e categorias** e abra **Grafo de operadores**.
-2. Confira a expressão de álgebra relacional abaixo do grafo e clique nos operadores para ver os campos.
-3. Carregue **Junção no WHERE**: o grafo deve manter o produto cartesiano `×`, seguido da seleção `σ`.
-4. Confira Parser, Esquema e Entregas; a otimização ainda aparece como etapa futura.
+1. Carregue **Produtos e categorias** e use **Comparar** no grafo.
+2. Observe `σ` e `π` próximos às leituras: os filtros precedem a projeção local e os campos de junção permanecem.
+3. Abra **Plano de execução** e **Resultados** para conferir tuplas, atributos e equivalência.
+4. Carregue **Junção no WHERE**: o plano otimizado ainda conserva `×`; sua conversão entra na entrega 4.
+5. Em **Pedidos por cliente**, confira que a ordem das tabelas segue o SQL.
 
 ## Validação
 
-Foram executados **19 testes** com `python -B -m unittest discover -s tests -v`. A suite verifica entradas válidas e inválidas, catálogo, aliases, ambiguidade, limites do parser, posições de erro e integração HTTP. A partir da entrega 2 verifica também os operadores e sua ordem; a partir da entrega 3 verifica resultados e equivalência.
+Foram executados **35 testes** com `python -B -m unittest discover -s tests -v`. A suite verifica entradas válidas e inválidas, catálogo, aliases, ambiguidade, limites do parser, posições de erro e integração HTTP. A partir da entrega 2 verifica também os operadores e sua ordem; a partir da entrega 3 verifica resultados e equivalência.
 
 `node --check app.js` verifica a sintaxe da apresentação, sem tornar Node.js uma dependência da aplicação. `git diff --check` verifica o patch. O README contém os comandos para executar a branch, a API e a matriz de requisitos disponíveis e futuros.
 

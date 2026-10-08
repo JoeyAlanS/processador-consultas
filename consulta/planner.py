@@ -1,8 +1,8 @@
-"""Entrega 2: grafo original e sua representação em álgebra relacional."""
+"""Entrega 3: seleção e projeção antecipadas; mantém a ordem do SQL."""
 
 import math
 
-from .parser import comparisons, predicate_text
+from .parser import aliases, comparisons, predicate_text, references
 from .schema import SAMPLE_DATA, SCHEMA
 
 SYMBOLS = {"scan": "R", "select": "σ", "project": "π", "join": "⋈", "cross": "×"}
@@ -59,7 +59,7 @@ def relational_algebra(root):
     return expressions[root["id"]]
 
 
-def build_plan(query, data=None):
+def build_plan(query, optimized=False, data=None):
     if data is None:
         data = SAMPLE_DATA
     next_id = 0
@@ -83,15 +83,45 @@ def build_plan(query, data=None):
         predicates = predicates or []
         return node("join" if predicates else "cross", [left, right], predicates=predicates, columns=left["columns"] + right["columns"], estimatedRows=left["estimatedRows"] * right["estimatedRows"] * restriction(predicates))
 
-    root = scan(query["tables"][0])
-    for index, table in enumerate(query["tables"][1:]):
-        root = combine(root, scan(table), comparisons(query["joins"][index]["condition"]))
-    if query["where"]:
-        root = select(root, comparisons(query["where"]))
-    root = project(root, [column["key"] for column in query["columns"]], True)
-    notes = ["As tabelas seguem a ordem da consulta.", "Filtros do WHERE são aplicados após a combinação das relações.", "A projeção final mantém os campos solicitados."]
+    if not optimized:
+        root = scan(query["tables"][0])
+        for index, table in enumerate(query["tables"][1:]):
+            root = combine(root, scan(table), comparisons(query["joins"][index]["condition"]))
+        if query["where"]:
+            root = select(root, comparisons(query["where"]))
+        root = project(root, [column["key"] for column in query["columns"]], True)
+        notes = ["As tabelas seguem a ordem da consulta.", "Filtros do WHERE são aplicados após a combinação das relações.", "A projeção final mantém os campos solicitados."]
+    else:
+        # Nesta entrega só antecipamos seleção e projeção. A ordem das
+        # relações e os produtos cartesianos do SQL são preservados.
+        predicates = [predicate for join in query["joins"] for predicate in comparisons(join["condition"])] + comparisons(query["where"])
+        multi = [predicate for predicate in predicates if len(aliases(predicate)) > 1]
+        required = {column["key"] for column in query["columns"]} | {column["key"] for predicate in multi for column in references(predicate)}
+        branches = []
+        for table in query["tables"]:
+            branch = scan(table)
+            filters = [predicate for predicate in predicates if aliases(predicate) == [table["alias"]]]
+            if filters:
+                branch = select(branch, filters)
+                notes.append(f"Seleção antecipada em {table['alias']}: {' AND '.join(map(predicate_text, filters))}. Mantém a ordem textual dos filtros.")
+            kept = [column for column in branch["columns"] if column in required]
+            if len(kept) < len(branch["columns"]):
+                notes.append(f"Projeção antecipada em {table['alias']}: {len(branch['columns'])} → {len(kept)} atributos; conserva campos de saída e de predicados entre tabelas.")
+                branch = project(branch, kept)
+            branches.append(branch)
+        root = branches[0]
+        for index, branch in enumerate(branches[1:]):
+            # Predicados locais do ON já foram aplicados nas respectivas
+            # tabelas. Constantes e condições entre tabelas ficam no ON.
+            remaining = [predicate for predicate in comparisons(query["joins"][index]["condition"]) if len(aliases(predicate)) != 1]
+            root = combine(root, branch, remaining)
+        remaining = [predicate for predicate in comparisons(query["where"]) if len(aliases(predicate)) != 1]
+        if remaining:
+            root = select(root, remaining)
+        root = project(root, [column["key"] for column in query["columns"]], True)
+        notes.append("Ordem das tabelas e condições entre relações preservadas; o produto cartesiano necessário ao plano original continua nesta etapa.")
     order = execution_order(root)
     for step, operator in enumerate(order, 1):
         operator.update(label=node_label(operator), symbol=SYMBOLS[operator["type"]], name=NAMES[operator["type"]], step=step, width=len(set(operator["columns"])))
     # Envia ordem e rótulos prontos; JavaScript apenas apresenta os operadores.
-    return {"root": root, "optimized": False, "notes": notes, "order": order}
+    return {"root": root, "optimized": optimized, "notes": notes, "order": order}
