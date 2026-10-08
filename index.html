@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#151a30">
-  <title>Processador de Consultas · BD_Vendas</title>
+  <title>Entrega 1 · 15/10/2026 · Processador de Consultas</title>
   <link rel="stylesheet" href="/styles.css">
   <script type="module" src="/app.js"></script>
 </head>
@@ -15,12 +15,12 @@
     <div class="sidebar-active"><span>▦</span> Processador SQL <span class="active-dot"></span></div>
     <div class="sidebar-label schema-label">CATÁLOGO BD_VENDAS <span>10</span></div>
     <nav id="table-nav" aria-label="Tabelas do banco"></nav>
-    <div class="sidebar-footer"><span class="live-dot"></span><div>Ambiente local<small>Dados fictícios · execução em memória</small></div></div>
+    <div class="sidebar-footer"><span class="live-dot"></span><div>Ambiente local<small>Catálogo e exemplos fictícios</small></div></div>
   </aside>
   <main>
     <header class="topbar"><div><span class="breadcrumb">Workspace</span><span class="slash">/</span> Processador de consultas</div><span class="course-tag">BANCO DE DADOS II</span></header>
     <div class="page">
-      <section class="page-heading"><div><div class="eyebrow">SQL → ÁLGEBRA RELACIONAL</div><h1>Veja sua consulta ganhar forma.</h1><p>Analise, valide e compare estratégias de execução em um só lugar.</p></div><button id="export" class="button secondary" disabled>↓ Exportar análise</button></section>
+      <section class="page-heading"><div><div class="eyebrow">SQL → PARSER E VALIDAÇÃO</div><h1>Entrega 1 · 15/10/2026</h1><p>Interface, parser e validação das consultas SQL.</p></div><button id="export" class="button secondary" disabled>↓ Exportar análise</button></section>
       <section class="query-layout" aria-label="Entrada da consulta">
         <div class="editor-card">
           <div class="editor-head"><span><i class="file-dot"></i> consulta.sql</span><label class="example-label">Exemplos <select id="example" aria-label="Carregar exemplo de consulta"></select></label></div>
@@ -28,14 +28,14 @@
           <textarea id="sql" spellcheck="false" aria-describedby="sql-help" maxlength="20000"></textarea>
           <div class="editor-foot"><span id="sql-help">SELECT · FROM · INNER JOIN · WHERE · AND<span class="shortcut">Ctrl + Enter para processar</span></span><button id="run" class="button primary">▶ Processar consulta</button></div>
         </div>
-        <div class="pipeline-card"><div class="card-kicker">DO TEXTO AO PLANO</div><h2>Uma consulta. Quatro etapas.</h2><ol id="pipeline"><li><span>01</span><div>Análise sintática<small>Separar os componentes SQL</small></div></li><li><span>02</span><div>Validação semântica<small>Conferir tabelas, campos e aliases</small></div></li><li><span>03</span><div>Plano relacional<small>Construir o grafo de operadores</small></div></li><li><span>04</span><div>Otimização e execução<small>Aplicar heurísticas e comparar</small></div></li></ol></div>
+        <div class="pipeline-card"><div class="card-kicker">DO TEXTO À ESTRUTURA</div><h2>Do SQL à validação.</h2><ol id="pipeline"><li><span>01</span><div>Análise sintática<small>Separar os componentes SQL</small></div></li><li><span>02</span><div>Validação semântica<small>Conferir tabelas, campos e aliases</small></div></li></ol></div>
       </section>
       <div id="status" class="status" role="status" aria-live="polite"></div>
       <div id="error" class="error-box" role="alert" hidden></div>
       <section id="metrics" class="metrics" aria-label="Métricas da execução"></section>
       <section class="workspace-card">
-        <div class="tabs" role="tablist" aria-label="Análise da consulta"><button id="tab-graph" role="tab" aria-selected="true" aria-controls="panel" data-tab="graph">Grafo de operadores</button><button id="tab-plan" role="tab" aria-selected="false" aria-controls="panel" tabindex="-1" data-tab="plan">Plano de execução</button><button id="tab-result" role="tab" aria-selected="false" aria-controls="panel" tabindex="-1" data-tab="result">Resultados</button><button id="tab-parser" role="tab" aria-selected="false" aria-controls="panel" tabindex="-1" data-tab="parser">Parser</button><button id="tab-schema" role="tab" aria-selected="false" aria-controls="panel" tabindex="-1" data-tab="schema">Esquema do banco</button><button id="tab-deliveries" role="tab" aria-selected="false" aria-controls="panel" tabindex="-1" data-tab="deliveries">Entregas</button></div>
-        <div id="panel" role="tabpanel" aria-labelledby="tab-graph" tabindex="0"></div>
+        <div class="tabs" role="tablist" aria-label="Análise da consulta"><button id="tab-parser" role="tab" aria-selected="true" aria-controls="panel" data-tab="parser">Parser</button><button id="tab-schema" role="tab" aria-selected="false" aria-controls="panel" tabindex="-1" data-tab="schema">Esquema do banco</button><button id="tab-deliveries" role="tab" aria-selected="false" aria-controls="panel" tabindex="-1" data-tab="deliveries">Entregas</button></div>
+        <div id="panel" role="tabpanel" aria-labelledby="tab-parser" tabindex="0"></div>
       </section>
       <footer class="page-footer"><span>Processador de consultas Python · Projeto acadêmico</span><span>σ Seleção <b>·</b> π Projeção <b>·</b> ⋈ Junção <b>·</b> × Produto cartesiano</span></footer>
     </div>

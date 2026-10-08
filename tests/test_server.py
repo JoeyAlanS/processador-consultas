@@ -42,16 +42,15 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(catalog["sampleCounts"]["Produto"], 8)
         self.assertEqual(len(catalog["examples"]), 5)
 
-    def test_post_query_returns_complete_python_analysis(self):
+    def test_post_query_returns_current_delivery_analysis(self):
         status, headers, body = self.request("POST", "/api/process", {"sql": "SELECT Nome FROM Produto WHERE idProduto = 1"})
         self.assertEqual(status, 200)
         self.assertIn("application/json", headers["Content-Type"])
         result = json.loads(body)
         self.assertEqual(result["backend"], "Python")
-        self.assertEqual(result["optimizedResult"]["rows"], [["Notebook"]])
-        self.assertTrue(result["verified"])
-        self.assertTrue(result["algebra"]["optimized"])
-        self.assertTrue(result["optimized"]["order"])
+        self.assertEqual(result["query"]["columns"][0]["key"], "Produto.Nome")
+        self.assertNotIn("optimizedResult", result)
+        self.assertNotIn("algebra", result)
 
     def test_query_error_has_line_column_and_position(self):
         status, _, body = self.request("POST", "/api/process", {"sql": "SELECT Nome,\nValor FROM Produto"})
