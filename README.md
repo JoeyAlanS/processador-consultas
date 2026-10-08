@@ -2,6 +2,8 @@
 
 Aplicação acadêmica com **lógica de consultas inteiramente em Python**: analisa SQL, valida referências no esquema **BD_Vendas**, converte consultas para álgebra relacional, mostra os grafos original e otimizado e executa os planos sobre registros fictícios. Implementa os requisitos dos documentos fornecidos e o cronograma de outubro de 2026. HTML/CSS/JavaScript são usados para apresentar a interface no navegador; o navegador envia a consulta para a API Python e recebe os resultados prontos.
 
+As quatro versões cumulativas das entregas estão descritas em [ENTREGAS.md](ENTREGAS.md), com links para cada branch, prazos, commits, testes e explicação do código. A `main` mantém a aplicação completa; cada branch de entrega contém apenas os recursos da etapa correspondente e das anteriores.
+
 ## Executar
 
 Requer **Python 3.10 ou superior**, usando somente a biblioteca padrão. Não precisa de Node.js, npm, Flask, Django ou instalação de pacotes.
