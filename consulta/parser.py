@@ -51,12 +51,16 @@ def tokenize(sql):
             continue
         match = NUMBER.match(sql, index)
         if match:
-            value = float(match.group())
-            if not math.isfinite(value):
+            literal = match.group()
+            try:
+                value = float(literal) if "." in literal else int(literal)
+            except ValueError as error:
+                raise QueryError("Número fora do intervalo suportado.", start) from error
+            if isinstance(value, float) and not math.isfinite(value):
                 raise QueryError("Número fora do intervalo suportado.", start)
-            if value.is_integer():
+            if isinstance(value, float) and value.is_integer():
                 value = int(value)
-            tokens.append({"type": "number", "value": value, "position": start})
+            tokens.append({"type": "number", "value": value, "raw": literal, "position": start})
             index = match.end()
             continue
         match = IDENTIFIER.match(sql, index)
@@ -196,6 +200,9 @@ def parse(sql):
         raise QueryError("A consulta SQL deve ser uma string.")
     if len(sql) > 20000:
         raise QueryError("A consulta deve ter no máximo 20.000 caracteres.", 0, "resource")
+    for position, character in enumerate(sql):
+        if 0xD800 <= ord(character) <= 0xDFFF:
+            raise QueryError("A consulta contém um caractere Unicode inválido.", position)
     if not sql.strip():
         raise QueryError("Insira uma consulta SELECT.")
     try:

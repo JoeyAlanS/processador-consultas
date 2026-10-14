@@ -1,12 +1,8 @@
-// Este arquivo somente controla e desenha a interface. A lógica SQL está em Python.
-
 const $ = selector => document.querySelector(selector);
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const number = value => value.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
-const formatEstimate = number;
-const nodeLabel = node => node.label;
 let schema = {}, sampleCounts = {}, examples = [], requestSequence = 0;
-let analysis = null, activeTab = 'graph', planMode = 'optimized', selectedTable = null, lastSql = '';
+let analysis = null, activeTab = 'graph', planMode = 'optimized', selectedTable = null, lastSql = '', lastAnalysisJson = '';
 
 $('#table-nav').addEventListener('click', event => {
   const button = event.target.closest('[data-table]');
@@ -15,13 +11,14 @@ $('#table-nav').addEventListener('click', event => {
   document.getElementById(`schema-${selectedTable}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 });
 
-async function requestJson(url, options = {}) {
+async function requestJson(url, options = {}, includeRaw = false) {
   let response;
   try { response = await fetch(url, options); }
   catch { throw new Error('Não foi possível acessar o servidor Python. Inicie o projeto com iniciar.cmd ou python server.py.'); }
-  const payload = await response.json();
+  const raw = await response.text();
+  const payload = JSON.parse(raw);
   if (!response.ok) throw Object.assign(new Error(payload.error?.message || 'Falha ao acessar o servidor Python.'), payload.error);
-  return payload;
+  return includeRaw ? { payload, raw } : payload;
 }
 
 async function run() {
@@ -34,10 +31,11 @@ async function run() {
   $('#run').textContent = 'Processando…';
   $('#export').disabled = true;
   try {
-    const result = await requestJson('/api/process', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sql }) });
+    const { payload: result, raw } = await requestJson('/api/process', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sql }) }, true);
     if (request !== requestSequence) return;
     analysis = result;
     lastSql = sql;
+    lastAnalysisJson = raw;
     $('#status').textContent = analysis.verified ? '✓ Consulta válida · planos executados com resultados equivalentes.' : '✓ Consulta válida · plano otimizado executado. O plano original excedeu o limite didático.';
     $('.pipeline-card').classList.add('complete');
     const changed = $('#sql').value !== sql;
@@ -81,7 +79,8 @@ $('#example').addEventListener('change', event => {
 });
 $('#export').addEventListener('click', () => {
   if (!analysis) return;
-  download('analise-consulta.json', JSON.stringify({ sql: lastSql, ...analysis }, null, 2), 'application/json');
+  const contents = `{"sql":${JSON.stringify(lastSql)},${lastAnalysisJson.trim().slice(1)}`;
+  download('analise-consulta.json', contents, 'application/json');
 });
 function download(filename, contents, type) {
   const url = URL.createObjectURL(new Blob([contents], { type }));
@@ -153,7 +152,7 @@ function graphSvg(plan, mode) {
   const order = new Map(plan.order.map(node => [node.id, node.step]));
   const nodeWidth = 270, stride = 302;
   function layout(node, y) {
-    const lines = wrap(nodeLabel(node));
+    const lines = wrap(node.label);
     const height = 61 + lines.length * 14;
     const children = node.children.map(child => layout(child, y + height + 38));
     const x = children.length ? children.reduce((sum, child) => sum + child.x, 0) / children.length : 22 + nodeWidth / 2 + leaf++ * stride;
@@ -167,7 +166,7 @@ function graphSvg(plan, mode) {
   const edgeMarkup = edges.map(({ from, to }) => `<path d="M ${from.x} ${from.y} L ${from.x} ${from.y - 19} L ${to.x} ${from.y - 19} L ${to.x} ${to.y + to.height + 3}" fill="none" stroke="#b7bdcf" stroke-width="1.5" marker-end="url(#arrow-${mode})"/>`).join('');
   const nodeMarkup = nodes.map(({ node, x, y, height, lines }) => {
     const color = node.type === 'select' ? '#198f79' : node.type === 'scan' ? '#6084b5' : node.type === 'cross' ? '#b87a36' : '#7a66ce';
-    return `<g class="graph-node" role="button" tabindex="0" aria-label="${escape(node.name + ': ' + nodeLabel(node))}" data-node="${node.id}" data-plan="${mode}"><title>${escape(nodeLabel(node))}</title><rect x="${x - nodeWidth / 2}" y="${y}" width="${nodeWidth}" height="${height}" rx="8" fill="#fff" stroke="#dfe2ed"/><rect x="${x - nodeWidth / 2}" y="${y}" width="4" height="${height}" rx="2" fill="${color}"/><text x="${x - 117}" y="${y + 23}" fill="${color}" font-family="Georgia,serif" font-size="18">${node.symbol}</text><text x="${x - 91}" y="${y + 22}" fill="#56617a" font-size="10" font-weight="600">${node.name}</text><rect x="${x + 103}" y="${y + 9}" width="23" height="19" rx="4" fill="#f4f2fb"/><text x="${x + 114.5}" y="${y + 22}" text-anchor="middle" fill="#8d7aba" font-size="9">${order.get(node.id)}</text>${lines.map((line, index) => `<text x="${x - 115}" y="${y + 43 + index * 14}" fill="#5f6981" font-family="Consolas,monospace" font-size="10">${escape(line)}</text>`).join('')}<text x="${x - 115}" y="${y + height - 11}" fill="#a0a8ba" font-size="9">≈ ${formatEstimate(node.estimatedRows)} tuplas · ${node.width} atributos</text></g>`;
+    return `<g class="graph-node" role="button" tabindex="0" aria-label="${escape(node.name + ': ' + node.label)}" data-node="${node.id}" data-plan="${mode}"><title>${escape(node.label)}</title><rect x="${x - nodeWidth / 2}" y="${y}" width="${nodeWidth}" height="${height}" rx="8" fill="#fff" stroke="#dfe2ed"/><rect x="${x - nodeWidth / 2}" y="${y}" width="4" height="${height}" rx="2" fill="${color}"/><text x="${x - 117}" y="${y + 23}" fill="${color}" font-family="Georgia,serif" font-size="18">${node.symbol}</text><text x="${x - 91}" y="${y + 22}" fill="#56617a" font-size="10" font-weight="600">${node.name}</text><rect x="${x + 103}" y="${y + 9}" width="23" height="19" rx="4" fill="#f4f2fb"/><text x="${x + 114.5}" y="${y + 22}" text-anchor="middle" fill="#8d7aba" font-size="9">${order.get(node.id)}</text>${lines.map((line, index) => `<text x="${x - 115}" y="${y + 43 + index * 14}" fill="#5f6981" font-family="Consolas,monospace" font-size="10">${escape(line)}</text>`).join('')}<text x="${x - 115}" y="${y + height - 11}" fill="#a0a8ba" font-size="9">≈ ${number(node.estimatedRows)} tuplas · ${node.width} atributos</text></g>`;
   }).join('');
   return `<div class="graph-stage"><svg viewBox="0 0 ${width} ${height}" role="group" aria-label="Grafo ${mode === 'optimized' ? 'otimizado' : 'original'}, fluxo de baixo para cima" style="min-width:${Math.max(314, leaf * 245 + 12)}px" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arrow-${mode}" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M 0 0 L 7 3.5 L 0 7 Z" fill="#b7bdcf"/></marker></defs>${edgeMarkup}${nodeMarkup}</svg><div class="legend"><span><i></i>Projeção / junção</span><span><i class="teal"></i>Seleção</span><span><i class="blue"></i>Tabela</span><span>↑ Fluxo dos resultados · números = ordem de execução</span></div></div>`;
 }
@@ -186,7 +185,7 @@ function renderGraph() {
       const node = analysis[element.dataset.plan].order.find(node => node.id === element.dataset.node);
       const measured = analysis[element.dataset.plan + 'Result']?.trace.find(step => step.nodeId === node.id);
       $('#node-details').hidden = false;
-      $('#node-details').innerHTML = `<strong>${node.symbol} ${node.name}</strong> · ${escape(nodeLabel(node))}<br>Atributos: ${escape(node.columns.join(', ') || 'tupla vazia')}<br>${measured ? `${measured.rows} tuplas reais · ${measured.width} atributos` : 'Execução original não concluída'} · estimativa: ${formatEstimate(node.estimatedRows)} tuplas.`;
+      $('#node-details').innerHTML = `<strong>${node.symbol} ${node.name}</strong> · ${escape(node.label)}<br>Atributos: ${escape(node.columns.join(', ') || 'tupla vazia')}<br>${measured ? `${measured.rows} tuplas reais · ${measured.width} atributos` : 'Execução original não concluída'} · estimativa: ${number(node.estimatedRows)} tuplas.`;
     }
     element.addEventListener('click', inspect);
     element.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); inspect(); } });
@@ -197,7 +196,7 @@ function renderExecution() {
   const plan = analysis[planMode], result = analysis[planMode + 'Result'];
   const rows = plan.order.map((node, index) => {
     const step = result?.trace.find(step => step.nodeId === node.id);
-    return `<tr><td><span class="step-number">${index + 1}</span></td><td>${node.symbol} ${node.name}</td><td><code>${escape(nodeLabel(node))}</code></td><td>${step?.inputRows.join(' + ') || '—'}</td><td>${step ? number(step.rows) : '—'}</td><td>${node.width}</td><td>≈ ${formatEstimate(node.estimatedRows)}</td></tr>`;
+    return `<tr><td><span class="step-number">${index + 1}</span></td><td>${node.symbol} ${node.name}</td><td><code>${escape(node.label)}</code></td><td>${step?.inputRows.join(' + ') || '—'}</td><td>${step ? number(step.rows) : '—'}</td><td>${node.width}</td><td>≈ ${number(node.estimatedRows)}</td></tr>`;
   }).join('');
   $('#panel').innerHTML = heading('Plano de execução', 'Percurso em pós-ordem: os filhos são executados antes do operador pai.', modeControls()) + `<div class="table-wrap"><table><thead><tr><th>Ordem</th><th>Operação</th><th>Tabela / expressão</th><th>Tuplas de entrada</th><th>Tuplas de saída</th><th>Atributos</th><th>Estimativa</th></tr></thead><tbody>${rows}</tbody></table></div><p class="note">${result ? `${number(result.work)} unidades de trabalho medidas (linhas visitadas / pares testados). ${number(result.cells)} células materializadas ao longo do plano.` : escape(analysis.originalError)}<br>Estimativas: igualdade × 0,10; desigualdade (&lt;&gt;) × 0,90; comparações de faixa × 0,33. Não são estatísticas de um SGBD.</p>`;
 }
@@ -207,7 +206,7 @@ function renderResults() {
   $('#csv').addEventListener('click', () => {
     const cell = value => {
       let text = value === null ? '' : String(value);
-      // Prevent spreadsheet applications from interpreting exported text as formulas.
+      // Mantém textos de células como dados ao abrir o CSV em uma planilha.
       if (typeof value === 'string' && /^[=+@\-\t\r]/.test(text)) text = "'" + text;
       return '"' + text.replaceAll('"', '""') + '"';
     };
@@ -217,7 +216,7 @@ function renderResults() {
 function renderParser() {
   const query = analysis.query;
   const predicates = query.predicateLabels;
-  $('#panel').innerHTML = heading('Componentes da consulta', 'Tokens, referências resolvidas e predicados após a validação semântica.') + `<div class="parser-grid"><div class="detail-card"><h3>Estrutura validada</h3><dl><div><dt>SELECT · projeção</dt><dd>${escape(query.columns.map(column => column.key).join(', '))}</dd></div><div><dt>FROM · relações</dt><dd>${escape(query.tables.map(table => table.table + ' AS ' + table.alias).join(', '))}</dd></div><div><dt>ON / WHERE · predicados</dt><dd>${escape(predicates.join(' AND ') || 'Sem predicados')}</dd></div><div><dt>VALIDAÇÃO</dt><dd>✓ Tabelas existentes · campos resolvidos · aliases únicos · escopo das junções</dd></div></dl></div><div class="detail-card"><h3>Análise léxica · ${query.tokens.length} tokens</h3><div class="token-list">${query.tokens.map(token => `<span class="token" title="${escape(token.type)} · posição ${token.position + 1}">${escape(token.type === 'string' ? "'" + token.value + "'" : token.value)}</span>`).join('')}</div></div></div><p class="note">Aceita SELECT, FROM, INNER JOIN … ON, WHERE, AND, aliases, *, parênteses, comentários de linha e =, &gt;, &lt;, &lt;=, &gt;=, &lt;&gt;. Nomes ignoram diferenças entre maiúsculas e minúsculas. Textos usam aspas simples; números usam ponto decimal. Não aceita funções, OR, agregação, subconsultas ou comandos de alteração.</p>`;
+  $('#panel').innerHTML = heading('Componentes da consulta', 'Tokens, referências resolvidas e predicados após a validação semântica.') + `<div class="parser-grid"><div class="detail-card"><h3>Estrutura validada</h3><dl><div><dt>SELECT · projeção</dt><dd>${escape(query.columns.map(column => column.key).join(', '))}</dd></div><div><dt>FROM · relações</dt><dd>${escape(query.tables.map(table => table.table + ' AS ' + table.alias).join(', '))}</dd></div><div><dt>ON / WHERE · predicados</dt><dd>${escape(predicates.join(' AND ') || 'Sem predicados')}</dd></div><div><dt>VALIDAÇÃO</dt><dd>✓ Tabelas existentes · campos resolvidos · aliases únicos · escopo das junções</dd></div></dl></div><div class="detail-card"><h3>Análise léxica · ${query.tokens.length} tokens</h3><div class="token-list">${query.tokens.map(token => `<span class="token" title="${escape(token.type)} · posição ${token.position + 1}">${escape(token.type === 'string' ? "'" + token.value + "'" : (token.raw ?? token.value))}</span>`).join('')}</div></div></div><p class="note">Aceita SELECT, FROM, INNER JOIN … ON, WHERE, AND, aliases, *, parênteses, comentários de linha e =, &gt;, &lt;, &lt;=, &gt;=, &lt;&gt;. Nomes ignoram diferenças entre maiúsculas e minúsculas. Textos usam aspas simples; números usam ponto decimal. Não aceita funções, OR, agregação, subconsultas ou comandos de alteração.</p>`;
 }
 function renderSchema() {
   $('#panel').innerHTML = heading('Catálogo BD_Vendas', 'As dez tabelas do enunciado, usadas para validar todas as referências da consulta.') + `<div class="schema-grid">${Object.entries(schema).map(([table, columns]) => `<article id="schema-${table}" class="schema-card ${selectedTable === table ? 'selected' : ''}"><h3>${table}<small>${sampleCounts[table]} registros</small></h3><ul>${columns.map(column => `<li>${column}</li>`).join('')}</ul></article>`).join('')}</div><p class="note">Os registros são exemplos fictícios para demonstração. A aplicação não exige conexão com MySQL; o script opcional de criação está em sql/bd-vendas.sql.</p>`;
