@@ -4,6 +4,8 @@ Aplicação acadêmica com **lógica de consultas inteiramente em Python**: anal
 
 As quatro versões cumulativas das entregas estão descritas em [ENTREGAS.md](ENTREGAS.md), com links para cada branch, prazos, commits, testes e explicação do código. A `main` mantém a aplicação completa; cada branch de entrega contém apenas os recursos da etapa correspondente e das anteriores.
 
+A revisão de 14/10/2026 está em [Falhas e correções](docs/REVISAO.md), com casos reproduzidos, código antes/depois e validação. O [Roteiro para duas pessoas](docs/APRESENTACAO.md) divide a demonstração, os algoritmos e as correções. As branches atuais são `entrega-1`, `entrega-2`, `entrega-3` e `entrega-4`.
+
 ## Executar
 
 Requer **Python 3.10 ou superior**, usando somente a biblioteca padrão. Não precisa de Node.js, npm, Flask, Django ou instalação de pacotes.
@@ -52,6 +54,8 @@ WHERE p.Preco > 200 AND c.Descricao = 'Informática';
 Não suporta `OR`, funções, agregações, `GROUP BY`, `ORDER BY`, `DISTINCT`, subconsultas, junções externas, aliases de coluna ou operações de escrita. Não é um SGBD completo. A interface apresenta os resultados e a ordem de cada operação, além de executar efetivamente as consultas de demonstração.
 
 Comparações entre números e textos geram erro em vez de coerção implícita. Comparações com `NULL` não passam pelos filtros. As strings são comparadas de forma exata, com distinção de maiúsculas; não há configuração de collation. Datas dos exemplos são strings ISO. Para `SELECT` sem `DISTINCT`, as projeções preservam duplicatas (semântica de multiconjunto). A ordem das linhas não é garantida e a comparação dos planos respeita a multiplicidade das linhas.
+
+Literais inteiros são lidos diretamente como `int`, preservando sua precisão no Python; decimais continuam usando `float`. A aba Parser mostra a grafia original dos literais e a exportação JSON conserva os números da resposta textual do backend. Unicode inválido é rejeitado como erro de consulta, com HTTP 422.
 
 ## Arquitetura e algoritmos
 

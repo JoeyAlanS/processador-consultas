@@ -67,6 +67,24 @@ class ServerTests(unittest.TestCase):
         position = sql.index("Valor")
         self.assertEqual(json.loads(body)["error"]["position"], len(sql[:position].encode("utf-16-le")) // 2)
 
+    def test_integer_comparison_keeps_exact_api_values(self):
+        sql = "SELECT Nome FROM Produto WHERE 9007199254740993 = 9007199254740992"
+        status, _, body = self.request("POST", "/api/process", {"sql": sql})
+        self.assertEqual(status, 200)
+        result = json.loads(body)
+        self.assertEqual(result["query"]["where"]["left"]["value"], 9007199254740993)
+        self.assertEqual(result["optimizedResult"]["rows"], [])
+
+    def test_invalid_unicode_returns_query_error_and_server_stays_available(self):
+        sql = "SELECT Nome FROM Produto WHERE Nome = '\ud800'"
+        payload = json.dumps({"sql": sql}).encode("ascii")
+        status, _, body = self.request("POST", "/api/process", payload, {"Content-Type": "application/json"})
+        self.assertEqual(status, 422)
+        error = json.loads(body)["error"]
+        self.assertIn("Unicode inválido", error["message"])
+        self.assertEqual(error["position"], sql.index("\ud800"))
+        self.assertEqual(self.request("GET", "/api/health")[0], 200)
+
     def test_malformed_requests_and_wrong_content_type(self):
         for payload in ({}, {"sql": 123}, ["SELECT * FROM Produto"]):
             with self.subTest(payload=payload):
