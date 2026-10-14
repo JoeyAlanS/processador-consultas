@@ -148,6 +148,7 @@ A inspeção não encontrou pacotes JavaScript antigos ou pastas de código aban
 | Comentários que apenas repetiam a arquitetura em `app.js` e no retorno do planejador | Removidos | A documentação já explica a divisão entre Python e apresentação |
 | Comentário da proteção CSV | Mantido e escrito em português | Explica por que textos com prefixos especiais recebem apóstrofo |
 | Rótulo acessível das métricas nas entregas 1 e 2 | Alterado para “Métricas da análise” | Nessas versões não existe execução dos registros |
+| `consulta/__pycache__/*.pyc`, não versionados | Arquivos gerados removidos | São caches reconstruíveis do Python; nenhum fonte foi excluído |
 
 Comentários sobre multiplicidade das projeções, SQL UNKNOWN e posição UTF-16 foram mantidos porque explicam decisões que não são óbvias. Os arquivos temporários de preparação não são publicados e são removidos ao terminar.
 
@@ -185,6 +186,8 @@ git diff --check
 ```
 
 Também foram conferidas as quatro interfaces, a preservação dos literais na aba Parser e a ausência de recursos futuros nas etapas iniciais. A exportação JSON da versão completa foi baixada e validada. Os testes anteriores continuam cobrindo aliases, campos inexistentes e ambíguos, escopo do ON, operadores, duplicatas, NULL, chaves das junções, limites e 100 consultas comparadas com uma referência independente nas versões com executor.
+
+A exportação CSV também foi baixada e lida com `csv.reader`: o exemplo Produtos por preço conservou o cabeçalho e os três resultados esperados, Teclado/249, Monitor/950 e Caixa de som/320. As revisões publicadas das entregas são `25ff403`, `7062d18`, `30b7ab1` e `5ff05a3`; a correção funcional da main está em `85c8f0f`. As quatro pontas antigas foram confirmadas como ancestrais das novas versões remotas antes da exclusão dos nomes anteriores.
 
 A aplicação usa dados fictícios e apenas a biblioteca padrão do Python. Não foi executado um banco MySQL nesta revisão; o script é opcional. Os fatores de seletividade continuam sendo estimativas didáticas, não estatísticas medidas de um SGBD. O subconjunto SQL suportado permanece o descrito no README.
 
