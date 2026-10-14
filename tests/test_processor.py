@@ -71,3 +71,22 @@ class ProcessorTests(unittest.TestCase):
     def test_first_delivery_does_not_build_a_plan(self):
         result = process_query("SELECT Nome FROM Produto")
         self.assertEqual(set(result), {"query", "backend"})
+
+    def test_integer_literals_preserve_precision(self):
+        sql = "SELECT Nome FROM Produto WHERE 9007199254740993 = 9007199254740992"
+        parsed = parse(sql)
+        self.assertEqual(parsed["where"]["left"]["value"], 9007199254740993)
+        self.assertEqual(parsed["where"]["right"]["value"], 9007199254740992)
+
+    def test_numeric_token_retains_written_literal(self):
+        sql = "SELECT Nome FROM Produto WHERE -9007199254740993 < +9007199254740993 AND Preco > .5"
+        tokens = [token for token in parse(sql)["tokens"] if token["type"] == "number"]
+        self.assertEqual([token["raw"] for token in tokens], ["-9007199254740993", "+9007199254740993", ".5"])
+        self.assertEqual(tokens[0]["value"], -9007199254740993)
+
+    def test_invalid_unicode_is_a_query_error(self):
+        for character in ("\ud800", "\udfff"):
+            sql = "SELECT Nome FROM Produto WHERE Nome = '" + character + "'"
+            with self.subTest(character=repr(character)), self.assertRaisesRegex(QueryError, "Unicode inválido") as caught:
+                parse(sql)
+            self.assertEqual(caught.exception.position, sql.index(character))

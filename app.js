@@ -1,12 +1,8 @@
-// Este arquivo somente controla e desenha a interface. A lógica SQL está em Python.
-
 const $ = selector => document.querySelector(selector);
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const number = value => value.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
-const formatEstimate = number;
-const nodeLabel = node => node.label;
 let schema = {}, sampleCounts = {}, examples = [], requestSequence = 0;
-let analysis = null, activeTab = 'parser', planMode = 'original', selectedTable = null, lastSql = '';
+let analysis = null, activeTab = 'parser', selectedTable = null, lastSql = '', lastAnalysisJson = '';
 
 $('#table-nav').addEventListener('click', event => {
   const button = event.target.closest('[data-table]');
@@ -15,13 +11,14 @@ $('#table-nav').addEventListener('click', event => {
   document.getElementById(`schema-${selectedTable}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 });
 
-async function requestJson(url, options = {}) {
+async function requestJson(url, options = {}, includeRaw = false) {
   let response;
   try { response = await fetch(url, options); }
   catch { throw new Error('Não foi possível acessar o servidor Python. Inicie o projeto com iniciar.cmd ou python server.py.'); }
-  const payload = await response.json();
+  const raw = await response.text();
+  const payload = JSON.parse(raw);
   if (!response.ok) throw Object.assign(new Error(payload.error?.message || 'Falha ao acessar o servidor Python.'), payload.error);
-  return payload;
+  return includeRaw ? { payload, raw } : payload;
 }
 
 async function run() {
@@ -34,10 +31,11 @@ async function run() {
   $('#run').textContent = 'Processando…';
   $('#export').disabled = true;
   try {
-    const result = await requestJson('/api/process', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sql }) });
+    const { payload: result, raw } = await requestJson('/api/process', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sql }) }, true);
     if (request !== requestSequence) return;
     analysis = result;
     lastSql = sql;
+    lastAnalysisJson = raw;
     $('#status').textContent = '✓ Consulta válida · análise sintática e semântica concluída.';
     $('.pipeline-card').classList.add('complete');
     const changed = $('#sql').value !== sql;
@@ -81,7 +79,8 @@ $('#example').addEventListener('change', event => {
 });
 $('#export').addEventListener('click', () => {
   if (!analysis) return;
-  download('analise-consulta.json', JSON.stringify({ sql: lastSql, ...analysis }, null, 2), 'application/json');
+  const contents = `{"sql":${JSON.stringify(lastSql)},${lastAnalysisJson.trim().slice(1)}`;
+  download('analise-consulta.json', contents, 'application/json');
 });
 function download(filename, contents, type) {
   const url = URL.createObjectURL(new Blob([contents], { type }));
@@ -128,7 +127,7 @@ function renderPanel() {
 function renderParser() {
   const query = analysis.query;
   const predicates = query.predicateLabels;
-  $('#panel').innerHTML = heading('Componentes da consulta', 'Tokens, referências resolvidas e predicados após a validação semântica.') + `<div class="parser-grid"><div class="detail-card"><h3>Estrutura validada</h3><dl><div><dt>SELECT · projeção</dt><dd>${escape(query.columns.map(column => column.key).join(', '))}</dd></div><div><dt>FROM · relações</dt><dd>${escape(query.tables.map(table => table.table + ' AS ' + table.alias).join(', '))}</dd></div><div><dt>ON / WHERE · predicados</dt><dd>${escape(predicates.join(' AND ') || 'Sem predicados')}</dd></div><div><dt>VALIDAÇÃO</dt><dd>✓ Tabelas existentes · campos resolvidos · aliases únicos · escopo das junções</dd></div></dl></div><div class="detail-card"><h3>Análise léxica · ${query.tokens.length} tokens</h3><div class="token-list">${query.tokens.map(token => `<span class="token" title="${escape(token.type)} · posição ${token.position + 1}">${escape(token.type === 'string' ? "'" + token.value + "'" : token.value)}</span>`).join('')}</div></div></div><p class="note">Aceita SELECT, FROM, INNER JOIN … ON, WHERE, AND, aliases, *, parênteses, comentários de linha e =, &gt;, &lt;, &lt;=, &gt;=, &lt;&gt;. Nomes ignoram diferenças entre maiúsculas e minúsculas. Textos usam aspas simples; números usam ponto decimal. Não aceita funções, OR, agregação, subconsultas ou comandos de alteração.</p>`;
+  $('#panel').innerHTML = heading('Componentes da consulta', 'Tokens, referências resolvidas e predicados após a validação semântica.') + `<div class="parser-grid"><div class="detail-card"><h3>Estrutura validada</h3><dl><div><dt>SELECT · projeção</dt><dd>${escape(query.columns.map(column => column.key).join(', '))}</dd></div><div><dt>FROM · relações</dt><dd>${escape(query.tables.map(table => table.table + ' AS ' + table.alias).join(', '))}</dd></div><div><dt>ON / WHERE · predicados</dt><dd>${escape(predicates.join(' AND ') || 'Sem predicados')}</dd></div><div><dt>VALIDAÇÃO</dt><dd>✓ Tabelas existentes · campos resolvidos · aliases únicos · escopo das junções</dd></div></dl></div><div class="detail-card"><h3>Análise léxica · ${query.tokens.length} tokens</h3><div class="token-list">${query.tokens.map(token => `<span class="token" title="${escape(token.type)} · posição ${token.position + 1}">${escape(token.type === 'string' ? "'" + token.value + "'" : (token.raw ?? token.value))}</span>`).join('')}</div></div></div><p class="note">Aceita SELECT, FROM, INNER JOIN … ON, WHERE, AND, aliases, *, parênteses, comentários de linha e =, &gt;, &lt;, &lt;=, &gt;=, &lt;&gt;. Nomes ignoram diferenças entre maiúsculas e minúsculas. Textos usam aspas simples; números usam ponto decimal. Não aceita funções, OR, agregação, subconsultas ou comandos de alteração.</p>`;
 }
 function renderSchema() {
   $('#panel').innerHTML = heading('Catálogo BD_Vendas', 'As dez tabelas do enunciado, usadas para validar todas as referências da consulta.') + `<div class="schema-grid">${Object.entries(schema).map(([table, columns]) => `<article id="schema-${table}" class="schema-card ${selectedTable === table ? 'selected' : ''}"><h3>${table}<small>${sampleCounts[table]} registros</small></h3><ul>${columns.map(column => `<li>${column}</li>`).join('')}</ul></article>`).join('')}</div><p class="note">Os registros são exemplos fictícios para demonstração. A aplicação não exige conexão com MySQL; o script opcional de criação está em sql/bd-vendas.sql.</p>`;
