@@ -140,5 +140,4 @@ def build_plan(query, optimized=False, data=None):
     order = execution_order(root)
     for step, operator in enumerate(order, 1):
         operator.update(label=node_label(operator), symbol=SYMBOLS[operator["type"]], name=NAMES[operator["type"]], step=step, width=len(set(operator["columns"])))
-    # Envia ordem e rótulos prontos; JavaScript apenas apresenta os operadores.
     return {"root": root, "optimized": optimized, "notes": notes, "order": order}
