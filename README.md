@@ -1,6 +1,6 @@
 # Processador de Consultas — entrega 2
 
-**Prazo: 20/10/2026 · branch `codex/entrega-2-2026-10-20`.** Acrescenta conversão para álgebra relacional e grafo não otimizado. Mantém a ordem das tabelas e aplica WHERE após as combinações. Esta versão constrói o plano; a execução comparativa entra na próxima etapa.
+**Prazo: 20/10/2026 · branch `entrega-2`.** Acrescenta conversão para álgebra relacional e grafo não otimizado. Mantém a ordem das tabelas e aplica WHERE após as combinações. Esta versão constrói o plano; a execução comparativa entra na próxima etapa.
 
 A lógica SQL é inteiramente em **Python**. HTML/CSS/JavaScript apresentam a interface e os dados calculados pelo backend. O código desta branch corresponde à etapa indicada; cada entrega acumula os recursos anteriores.
 
@@ -9,7 +9,7 @@ A lógica SQL é inteiramente em **Python**. HTML/CSS/JavaScript apresentam a in
 Requer Python 3.10 ou superior, apenas com a biblioteca padrão. Não é necessário instalar pacotes, Node.js ou MySQL.
 
 ```powershell
-git switch codex/entrega-2-2026-10-20
+git switch entrega-2
 python server.py
 ```
 
@@ -19,7 +19,7 @@ Abra http://localhost:3000. No Windows, use também `.\iniciar.cmd`. O iniciador
 python -B -m unittest discover -s tests -v
 ```
 
-Alternativa Windows: `.\testar.cmd`. Esta etapa foi verificada com **19 testes**, além da sintaxe da interface e da verificação do diff.
+Alternativa Windows: `.\testar.cmd`. Esta etapa foi verificada com **24 testes**, além da sintaxe da interface e da verificação do diff.
 
 ## Demonstrar esta entrega
 
@@ -60,10 +60,10 @@ O guia [ENTREGA.md](ENTREGA.md) explica o fluxo, os algoritmos, as alterações 
 
 | Entrega | Prazo | Situação | Branch |
 | --- | --- | --- | --- |
-| 1 | 15/10/2026 | Disponível | [codex/entrega-1-2026-10-15](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-1-2026-10-15) |
-| 2 | 20/10/2026 | Disponível | [codex/entrega-2-2026-10-20](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-2-2026-10-20) |
-| 3 | 22/10/2026 | Etapa futura | [codex/entrega-3-2026-10-22](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-3-2026-10-22) |
-| 4 | 27/10/2026 | Etapa futura | [codex/entrega-4-2026-10-27](https://github.com/JoeyAlanS/processador-consultas/tree/codex/entrega-4-2026-10-27) |
+| 1 | 15/10/2026 | Disponível | [entrega-1](https://github.com/JoeyAlanS/processador-consultas/tree/entrega-1) |
+| 2 | 20/10/2026 | Disponível | [entrega-2](https://github.com/JoeyAlanS/processador-consultas/tree/entrega-2) |
+| 3 | 22/10/2026 | Etapa futura | [entrega-3](https://github.com/JoeyAlanS/processador-consultas/tree/entrega-3) |
+| 4 | 27/10/2026 | Etapa futura | [entrega-4](https://github.com/JoeyAlanS/processador-consultas/tree/entrega-4) |
 
 A `main` mantém a aplicação completa. As branches foram organizadas a partir do projeto já finalizado, com recorte real dos módulos e da interface por etapa. As datas nos nomes são os prazos fornecidos, e os commits conservam sua data real. Disponível não significa entregue à disciplina. O documento informa penalidade de −1 por item.
 
@@ -86,3 +86,9 @@ print(analise["original"]["order"])
 ```
 
 O script `sql/bd-vendas.sql` cria as dez tabelas com chaves no MySQL. Seu uso é opcional; não há conexão automática com o banco. Os dados do projeto são fictícios.
+
+## Revisão do repositório — 14/10/2026
+
+A branch foi renomeada para `entrega-2`, mantendo todos os commits da versão anterior. A revisão corrigiu precisão de inteiros no parser, rejeição de Unicode inválido com erro de consulta, apresentação dos literais numéricos e exportação JSON sem reconversão dos números pelo navegador. Foram removidos auxiliares de apresentação redundantes e, quando presentes, código sem uso. Nenhum recurso de uma entrega futura foi antecipado.
+
+Os documentos detalhados da revisão completa e o roteiro para duas pessoas estão na main: [Revisão](https://github.com/JoeyAlanS/processador-consultas/blob/main/docs/REVISAO.md) e [Apresentação](https://github.com/JoeyAlanS/processador-consultas/blob/main/docs/APRESENTACAO.md).

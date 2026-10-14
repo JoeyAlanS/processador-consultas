@@ -17,9 +17,6 @@ def restriction(predicates):
     return math.prod(factor(predicate) for predicate in predicates)
 
 
-def format_estimate(value):
-    return f"{value:,.2f}".rstrip("0").rstrip(".").replace(",", "_").replace(".", ",").replace("_", ".")
-
 
 def node_label(node):
     if node["type"] == "scan":
@@ -93,5 +90,4 @@ def build_plan(query, data=None):
     order = execution_order(root)
     for step, operator in enumerate(order, 1):
         operator.update(label=node_label(operator), symbol=SYMBOLS[operator["type"]], name=NAMES[operator["type"]], step=step, width=len(set(operator["columns"])))
-    # Envia ordem e rótulos prontos; JavaScript apenas apresenta os operadores.
     return {"root": root, "optimized": False, "notes": notes, "order": order}
