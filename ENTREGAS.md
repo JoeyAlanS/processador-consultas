@@ -13,7 +13,7 @@ As quantidades representam requisitos do cronograma, não uma distribuição de 
 
 ## O que mudou no código
 
-**Entrega 1:** conserva `consulta/parser.py`, catálogo, validação e servidor Python. `process_query` retorna a consulta validada, seus tokens e predicados. Não possui `consulta/planner.py` nem `consulta/executor.py`. A interface oferece Parser, Esquema e Entregas e mostra os requisitos seguintes como etapas futuras.
+**Entrega 1:** conserva `consulta/parser.py`, catálogo, validação e servidor Python. `process_query` retorna a consulta validada, seus tokens e predicados. Não possui `consulta/planner.py` nem `consulta/executor.py`. A interface oferece Parser e Esquema do banco.
 
 **Entrega 2:** introduz `consulta/planner.py`. O plano original respeita a ordem das tabelas do SQL, aplica as condições de ON nas junções, mantém produtos cartesianos e coloca o WHERE após as combinações. Acrescenta a álgebra calculada em Python, o desenho SVG e a inspeção dos operadores. Ainda não executa registros nem aplica heurísticas.
 

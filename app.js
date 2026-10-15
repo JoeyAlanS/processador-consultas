@@ -37,7 +37,6 @@ async function run() {
     lastSql = sql;
     lastAnalysisJson = raw;
     $('#status').textContent = analysis.verified ? '✓ Consulta válida · planos executados com resultados equivalentes.' : '✓ Consulta válida · plano otimizado executado. O plano original excedeu o limite didático.';
-    $('.pipeline-card').classList.add('complete');
     const changed = $('#sql').value !== sql;
     $('#export').disabled = changed;
     if (changed) {
@@ -48,7 +47,6 @@ async function run() {
   } catch (error) {
     if (request !== requestSequence) return;
     analysis = null;
-    $('.pipeline-card').classList.remove('complete');
     $('#export').disabled = true;
     $('#metrics').innerHTML = '';
     $('#status').textContent = 'A consulta precisa de uma correção.';
@@ -124,7 +122,6 @@ function modeControls(compare = false) {
 }
 function renderPanel() {
   if (activeTab === 'schema') return renderSchema();
-  if (activeTab === 'deliveries') return renderDeliveries();
   if (!analysis) { $('#panel').innerHTML = '<div class="empty">Insira uma consulta válida para explorar sua análise.</div>'; return; }
   if (activeTab === 'graph') renderGraph();
   else if (activeTab === 'plan') renderExecution();
@@ -221,19 +218,6 @@ function renderParser() {
 function renderSchema() {
   $('#panel').innerHTML = heading('Catálogo BD_Vendas', 'As dez tabelas do enunciado, usadas para validar todas as referências da consulta.') + `<div class="schema-grid">${Object.entries(schema).map(([table, columns]) => `<article id="schema-${table}" class="schema-card ${selectedTable === table ? 'selected' : ''}"><h3>${table}<small>${sampleCounts[table]} registros</small></h3><ul>${columns.map(column => `<li>${column}</li>`).join('')}</ul></article>`).join('')}</div><p class="note">Os registros são exemplos fictícios para demonstração. A aplicação não exige conexão com MySQL; o script opcional de criação está em sql/bd-vendas.sql.</p>`;
 }
-function renderDeliveries() {
-  const deliveries = [
-    ['15/10/2026', 'Interface gráfica existente e funcional', 'Editor SQL, exemplos, navegação e exportação'],
-    ['15/10/2026', 'A string é parseada', 'Lexer e parser com estrutura da consulta e tokens'],
-    ['15/10/2026', 'Campos e comandos errados são validados', 'Erros de sintaxe, tabelas, campos, ambiguidade e escopo'],
-    ['20/10/2026', 'Conversão para álgebra relacional', 'Expressões de seleção, projeção, junção e produto'],
-    ['20/10/2026', 'Grafo não otimizado', 'Plano original com fluxo e ordem de execução'],
-    ['22/10/2026', 'Heurísticas de projeção e seleção', 'Filtros e redução de atributos próximos às tabelas'],
-    ['27/10/2026', 'Demais heurísticas', 'Seletividade, reordenação e conversão de produto em junção'],
-  ];
-  $('#panel').innerHTML = heading('Cronograma de entregas', 'Prazos fornecidos em Entregáveis.pdf · penalidade indicada: −1 por item.') + `<div class="table-wrap"><table><thead><tr><th>Entrega</th><th>Requisito</th><th>Implementação disponível</th><th>Situação</th></tr></thead><tbody>${deliveries.map(([date, title, description]) => `<tr><td class="delivery-date">${date}</td><td>${title}</td><td>${description}</td><td><span class="badge">Implementado</span></td></tr>`).join('')}</tbody></table></div><p class="note">“Implementado” indica disponibilidade no projeto local. A apresentação e a entrega à disciplina são realizadas pela equipe.</p>`;
-}
-
 async function initialize() {
   $('#run').disabled = true;
   $('#status').textContent = 'Conectando ao servidor Python…';
