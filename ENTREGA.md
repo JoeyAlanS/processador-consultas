@@ -18,7 +18,7 @@ Acrescenta conversão para álgebra relacional e grafo não otimizado. Mantém a
 
 ## Como a entrada é processada
 
-1. `app.js` envia a string do editor para `POST /api/process`. O JavaScript controla formulários, abas, desenho e exportação.
+1. `app.js` envia a string do editor para `POST /api/process`. O JavaScript controla formulários, abas e apresentação dos dados.
 2. `server.py` verifica o JSON e o campo `sql`, chama `consulta.process_query` e devolve uma resposta JSON. `create_server` também permite testes HTTP numa porta temporária.
 3. `tokenize`, em `consulta/parser.py`, reconhece palavras, campos qualificados, números, textos, símbolos e operadores, guardando a posição de cada token. A classe `QueryError` transporta a mensagem e a posição para a interface.
 4. `Parser` percorre os tokens na gramática `SELECT … FROM … [INNER JOIN … ON …] [WHERE …]`. Condições com `AND` e parênteses viram uma árvore de expressões.
