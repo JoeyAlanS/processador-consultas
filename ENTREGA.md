@@ -34,7 +34,7 @@ Consultas inválidas mostram linha e coluna. O servidor converte a posição Pyt
 - Mantém interface, editor, exemplos, catálogo, exportação JSON, parser e validação em Python.
 - `process_query` devolve somente `query` e `backend`; não gera álgebra nem planos.
 - `consulta/planner.py` e `consulta/executor.py` estão ausentes desta versão.
-- A interface começa em Parser e oferece Esquema e Entregas; não apresenta abas ou resultados de etapas futuras.
+- A interface começa em Parser e oferece Esquema do banco; não apresenta abas ou resultados de etapas futuras.
 - Os testes verificam o processamento e a API da etapa inicial, inclusive a ausência de planos na resposta.
 
 ## Roteiro de apresentação
