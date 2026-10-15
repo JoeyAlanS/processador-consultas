@@ -54,7 +54,7 @@ As estimativas usam o tamanho da amostra e fatores didáticos: igualdade 0,10; `
 1. Carregue **Produtos e categorias** e abra **Grafo de operadores**.
 2. Confira a expressão de álgebra relacional abaixo do grafo e clique nos operadores para ver os campos.
 3. Carregue **Junção no WHERE**: o grafo deve manter o produto cartesiano `×`, seguido da seleção `σ`.
-4. Confira Parser, Esquema e Entregas; a otimização ainda aparece como etapa futura.
+4. Confira Parser e Esquema do banco.
 
 ## Validação
 
