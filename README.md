@@ -27,7 +27,7 @@ Alternativa Windows: `.\testar.cmd`. Esta etapa foi verificada com **40 testes**
 2. Carregue **Pedidos por cliente**: a tabela filtrada mais restritiva deve iniciar o plano.
 3. Teste `SELECT Nome FROM Produto WHERE Preco > 10 AND Categoria_idCategoria = 1`: a igualdade passa a ser aplicada primeiro pela estimativa.
 4. Confira a ordem dos operadores e as métricas em **Plano de execução**.
-5. Confira a equivalência em **Resultados** e exporte o CSV ou a análise JSON.
+5. Confira a equivalência em **Resultados** e exporte o CSV.
 
 ## Código desta etapa
 

@@ -18,7 +18,7 @@ Completa as heurísticas: prioriza filtros mais restritivos, inicia pela relaç�
 
 ## Como a entrada é processada
 
-1. `app.js` envia a string do editor para `POST /api/process`. O JavaScript controla formulários, abas, desenho e exportação.
+1. `app.js` envia a string do editor para `POST /api/process`. O JavaScript controla formulários, abas e apresentação dos dados.
 2. `server.py` verifica o JSON e o campo `sql`, chama `consulta.process_query` e devolve uma resposta JSON. `create_server` também permite testes HTTP numa porta temporária.
 3. `tokenize`, em `consulta/parser.py`, reconhece palavras, campos qualificados, números, textos, símbolos e operadores, guardando a posição de cada token. A classe `QueryError` transporta a mensagem e a posição para a interface.
 4. `Parser` percorre os tokens na gramática `SELECT … FROM … [INNER JOIN … ON …] [WHERE …]`. Condições com `AND` e parênteses viram uma árvore de expressões.
@@ -72,7 +72,7 @@ Cada plano tem limites de 50.000 tuplas intermediárias e 500.000 unidades de tr
 
 O cálculo é heurístico: não consulta estatísticas reais do MySQL nem implementa uma busca exaustiva de planos por custo. A escolha considera conexão e cardinalidade estimada. O executor mede os resultados efetivos para comparação.
 
-Esta etapa recupera todos os recursos funcionais da versão completa já existente na main, com título, cronograma e documentação identificando a entrega final.
+Esta etapa recupera todos os recursos funcionais da versão completa já existente na main, com a documentação identificando a entrega final.
 
 ## Roteiro de apresentação
 
@@ -80,7 +80,7 @@ Esta etapa recupera todos os recursos funcionais da versão completa já existen
 2. Carregue **Pedidos por cliente**: a tabela filtrada mais restritiva deve iniciar o plano.
 3. Teste `SELECT Nome FROM Produto WHERE Preco > 10 AND Categoria_idCategoria = 1`: a igualdade passa a ser aplicada primeiro pela estimativa.
 4. Confira a ordem dos operadores e as métricas em **Plano de execução**.
-5. Confira a equivalência em **Resultados** e exporte o CSV ou a análise JSON.
+5. Confira a equivalência em **Resultados** e exporte o CSV.
 
 ## Validação
 
