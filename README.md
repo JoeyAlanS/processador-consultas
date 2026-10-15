@@ -27,7 +27,6 @@ Alternativa Windows: `.\testar.cmd`. Esta etapa foi verificada com **22 testes**
 2. Na aba **Parser**, confira os tokens, os campos resolvidos e os predicados.
 3. Veja as dez tabelas na aba **Esquema do banco**.
 4. Carregue **Campo inválido** e teste `DELETE FROM Produto`: ambos devem gerar erro com indicação da posição.
-5. Use **Exportar análise** para obter o JSON produzido pelo Python.
 
 ## Código desta etapa
 

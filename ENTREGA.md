@@ -18,7 +18,7 @@ Interface gráfica funcional, análise da string SQL e validação de campos e c
 
 ## Como a entrada é processada
 
-1. `app.js` envia a string do editor para `POST /api/process`. O JavaScript controla formulários, abas, desenho e exportação.
+1. `app.js` envia a string do editor para `POST /api/process`. O JavaScript controla formulários, abas e apresentação dos dados.
 2. `server.py` verifica o JSON e o campo `sql`, chama `consulta.process_query` e devolve uma resposta JSON. `create_server` também permite testes HTTP numa porta temporária.
 3. `tokenize`, em `consulta/parser.py`, reconhece palavras, campos qualificados, números, textos, símbolos e operadores, guardando a posição de cada token. A classe `QueryError` transporta a mensagem e a posição para a interface.
 4. `Parser` percorre os tokens na gramática `SELECT … FROM … [INNER JOIN … ON …] [WHERE …]`. Condições com `AND` e parênteses viram uma árvore de expressões.
@@ -31,7 +31,7 @@ Consultas inválidas mostram linha e coluna. O servidor converte a posição Pyt
 
 ## Mudanças específicas da entrega 1
 
-- Mantém interface, editor, exemplos, catálogo, exportação JSON, parser e validação em Python.
+- Mantém interface, editor, exemplos, catálogo, parser e validação em Python.
 - `process_query` devolve somente `query` e `backend`; não gera álgebra nem planos.
 - `consulta/planner.py` e `consulta/executor.py` estão ausentes desta versão.
 - A interface começa em Parser e oferece Esquema do banco; não apresenta abas ou resultados de etapas futuras.
@@ -43,7 +43,6 @@ Consultas inválidas mostram linha e coluna. O servidor converte a posição Pyt
 2. Na aba **Parser**, confira os tokens, os campos resolvidos e os predicados.
 3. Veja as dez tabelas na aba **Esquema do banco**.
 4. Carregue **Campo inválido** e teste `DELETE FROM Produto`: ambos devem gerar erro com indicação da posição.
-5. Use **Exportar análise** para obter o JSON produzido pelo Python.
 
 ## Validação
 

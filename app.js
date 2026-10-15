@@ -2,7 +2,7 @@ const $ = selector => document.querySelector(selector);
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const number = value => value.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
 let schema = {}, sampleCounts = {}, examples = [], requestSequence = 0;
-let analysis = null, activeTab = 'parser', selectedTable = null, lastSql = '', lastAnalysisJson = '';
+let analysis = null, activeTab = 'parser', selectedTable = null;
 
 $('#table-nav').addEventListener('click', event => {
   const button = event.target.closest('[data-table]');
@@ -11,14 +11,13 @@ $('#table-nav').addEventListener('click', event => {
   document.getElementById(`schema-${selectedTable}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 });
 
-async function requestJson(url, options = {}, includeRaw = false) {
+async function requestJson(url, options = {}) {
   let response;
   try { response = await fetch(url, options); }
   catch { throw new Error('Não foi possível acessar o servidor Python. Inicie o projeto com iniciar.cmd ou python server.py.'); }
-  const raw = await response.text();
-  const payload = JSON.parse(raw);
+  const payload = await response.json();
   if (!response.ok) throw Object.assign(new Error(payload.error?.message || 'Falha ao acessar o servidor Python.'), payload.error);
-  return includeRaw ? { payload, raw } : payload;
+  return payload;
 }
 
 async function run() {
@@ -29,16 +28,12 @@ async function run() {
   $('#status').textContent = 'Processando consulta no servidor Python…';
   $('#run').disabled = true;
   $('#run').textContent = 'Processando…';
-  $('#export').disabled = true;
   try {
-    const { payload: result, raw } = await requestJson('/api/process', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sql }) }, true);
+    const result = await requestJson('/api/process', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sql }) });
     if (request !== requestSequence) return;
     analysis = result;
-    lastSql = sql;
-    lastAnalysisJson = raw;
     $('#status').textContent = '✓ Consulta válida · análise sintática e semântica concluída.';
     const changed = $('#sql').value !== sql;
-    $('#export').disabled = changed;
     if (changed) {
       $('#status').classList.add('pending');
       $('#status').textContent = 'Consulta alterada · clique em Processar para atualizar a análise abaixo.';
@@ -47,7 +42,6 @@ async function run() {
   } catch (error) {
     if (request !== requestSequence) return;
     analysis = null;
-    $('#export').disabled = true;
     $('#metrics').innerHTML = '';
     $('#status').textContent = 'A consulta precisa de uma correção.';
     $('#error').hidden = false;
@@ -69,22 +63,11 @@ $('#sql').addEventListener('keydown', event => { if ((event.ctrlKey || event.met
 $('#sql').addEventListener('input', () => {
   $('#status').classList.add('pending');
   $('#status').textContent = 'Consulta alterada · clique em Processar para atualizar a análise abaixo.';
-  $('#export').disabled = true;
 });
 $('#example').addEventListener('change', event => {
   if (event.target.value === '') return;
   $('#sql').value = examples[Number(event.target.value)].sql; run();
 });
-$('#export').addEventListener('click', () => {
-  if (!analysis) return;
-  const contents = `{"sql":${JSON.stringify(lastSql)},${lastAnalysisJson.trim().slice(1)}`;
-  download('analise-consulta.json', contents, 'application/json');
-});
-function download(filename, contents, type) {
-  const url = URL.createObjectURL(new Blob([contents], { type }));
-  const anchor = document.createElement('a'); anchor.href = url; anchor.download = filename;
-  anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
 function switchTab(tab) {
   activeTab = tab;
   document.querySelectorAll('[role=tab]').forEach(button => {
