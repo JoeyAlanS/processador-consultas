@@ -21,7 +21,7 @@ Abram http://localhost:3000. Deixem disponíveis a interface, este roteiro, [REV
 | Pessoa 1 | 5–7 min | Correções de inteiros e Unicode | `tokenize`, `parse`, testes de regressão |
 | Pessoa 2 | 7–9 min | Grafo original e álgebra | `consulta/planner.py` |
 | Pessoa 2 | 9–11 min | Seleção, projeção e demais heurísticas | `build_plan` |
-| Pessoa 2 | 11–13 min | Execução, equivalência e exportação corrigida | `consulta/executor.py`, `app.js` |
+| Pessoa 2 | 11–13 min | Execução, equivalência e precisão dos literais | `consulta/executor.py`, `app.js` |
 | Pessoa 2 | 13–14 min | Testes, limpeza e branches | `tests/`, `ENTREGAS.md`, `REVISAO.md` |
 
 ## Pessoa 1: entrada, parsing, validação e correções
@@ -115,7 +115,7 @@ Transição sugerida:
 
 > “Com a entrada validada e os literais preservados, a consulta chega ao planejador. A segunda parte mostra como os operadores são construídos e como verificamos que as transformações mantêm o resultado.”
 
-## Pessoa 2: planos, execução, exportação e repositório
+## Pessoa 2: planos, execução, precisão e repositório
 
 ### 1. Plano original e álgebra
 
@@ -153,24 +153,11 @@ return left["columns"] == right["columns"] and Counter(map(tuple, left["rows"]))
 
 Explique que a ordem das linhas pode mudar, mas cada tupla deve manter sua multiplicidade. Projeções não eliminam duplicatas; comparar conjuntos simples seria insuficiente. Se o plano original exceder um limite, a interface informa que a equivalência não foi verificada, em vez de afirmar uma verificação que não ocorreu.
 
-### 4. Exportação JSON corrigida
+### 4. Precisão dos literais na interface
 
-Retorne à consulta com os dois inteiros grandes. Mostre que Parser apresenta `token.raw ?? token.value`. Explique que Python preserva o inteiro, mas uma conversão numérica no JavaScript pode arredondá-lo.
+Retorne à consulta com os dois inteiros grandes e mostre que Parser apresenta `token.raw ?? token.value`. Explique que Python preserva os inteiros e que a interface utiliza a grafia original dos tokens para apresentar seus dígitos.
 
-Mostre em `app.js`:
-
-```javascript
-const raw = await response.text();
-const payload = JSON.parse(raw);
-```
-
-E o evento de exportação:
-
-```javascript
-const contents = `{"sql":${JSON.stringify(lastSql)},${lastAnalysisJson.trim().slice(1)}`;
-```
-
-Exporte a análise e explique que o arquivo aproveita o texto JSON original do backend. O teste manual da revisão abriu o arquivo baixado com Python e confirmou os dois inteiros exatos e resultado vazio. A exportação CSV e sua proteção contra interpretação de textos como fórmulas foram preservadas.
+A interface atual usa o título Processador de consultas, a marca Consulta e não oferece exportação da análise JSON. Nas versões com executor, a exportação CSV continua disponível em Resultados.
 
 ### 5. Limpeza, testes e branches
 
@@ -192,8 +179,8 @@ Explique que a publicação das novas branches e a conferência de seus históri
 Use `entrega-1`, não a versão completa, quando a apresentação for exclusivamente dessa entrega.
 
 - **Pessoa 1:** objetivo, interface, catálogo, lexer, tokens e AST. Demonstre um SELECT válido e a preservação dos literais inteiros na aba Parser.
-- **Pessoa 2:** validação de campos, comandos e aliases; erros com posição; correção de Unicode; exportação JSON e os 22 testes da etapa.
-- Não abra grafos, resultados ou otimizador: eles não existem nessa versão. Mostre o cronograma com as etapas seguintes como futuras.
+- **Pessoa 2:** validação de campos, comandos e aliases; erros com posição; correção de Unicode e os 22 testes da etapa.
+- Não abra grafos, resultados ou otimizador: eles não existem nessa versão. Consulte o README para explicar as etapas seguintes.
 
 Na entrega 2, acrescentem álgebra e grafo original. Na entrega 3, mostrem seleção/projeção e a execução comparativa, explicando que a ordem das tabelas permanece a do SQL e o produto cartesiano da junção no WHERE ainda existe. Reservem reordenação e conversão em junção para a entrega 4.
 

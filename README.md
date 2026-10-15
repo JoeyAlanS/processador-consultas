@@ -38,7 +38,7 @@ No Windows, alternativa com a mesma descoberta do interpretador: `.\testar.cmd`.
 4. Abra **Plano de execução** para observar entradas, saídas, atributos e estimativas.
 5. Confira **Resultados** e a verificação de equivalência. **Parser** mostra tokens e referências resolvidas; **Esquema do banco** lista os campos válidos.
 6. Carregue **Campo inválido** para demonstrar o erro com linha e coluna. Experimente `DELETE FROM Produto` para demonstrar a rejeição de comandos fora do escopo.
-7. Exporte a análise em JSON ou o resultado em CSV.
+7. Exporte o resultado em CSV pela aba **Resultados**.
 
 ## Subconjunto SQL
 
@@ -55,7 +55,7 @@ Não suporta `OR`, funções, agregações, `GROUP BY`, `ORDER BY`, `DISTINCT`, 
 
 Comparações entre números e textos geram erro em vez de coerção implícita. Comparações com `NULL` não passam pelos filtros. As strings são comparadas de forma exata, com distinção de maiúsculas; não há configuração de collation. Datas dos exemplos são strings ISO. Para `SELECT` sem `DISTINCT`, as projeções preservam duplicatas (semântica de multiconjunto). A ordem das linhas não é garantida e a comparação dos planos respeita a multiplicidade das linhas.
 
-Literais inteiros são lidos diretamente como `int`, preservando sua precisão no Python; decimais continuam usando `float`. A aba Parser mostra a grafia original dos literais e a exportação JSON conserva os números da resposta textual do backend. Unicode inválido é rejeitado como erro de consulta, com HTTP 422.
+Literais inteiros são lidos diretamente como `int`, preservando sua precisão no Python; decimais continuam usando `float`. A aba Parser mostra a grafia original dos literais. Unicode inválido é rejeitado como erro de consulta, com HTTP 422.
 
 ## Arquitetura e algoritmos
 
@@ -68,7 +68,7 @@ Literais inteiros são lidos diretamente como `int`, preservando sua precisão n
 | `consulta/executor.py` | Execução em pós-ordem, métricas e equivalência de multiconjuntos |
 | `consulta/processor.py` | Pipeline completo de processamento da consulta |
 | `server.py` | Servidor HTTP local e API JSON, em Python |
-| `app.js` | Apresentação da interface, requisições à API, desenho SVG e exportações |
+| `app.js` | Apresentação da interface, requisições à API, desenho SVG e exportação CSV |
 | `tests/test_processor.py` | Testes dos algoritmos e de resultados conhecidos |
 | `tests/test_server.py` | Testes de integração da API, erros e arquivos estáticos |
 | `sql/bd-vendas.sql` | Criação opcional do esquema em MySQL |
