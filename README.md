@@ -6,6 +6,8 @@ As quatro versões cumulativas das entregas estão descritas em [ENTREGAS.md](EN
 
 A revisão de 14/10/2026 está em [Falhas e correções](docs/REVISAO.md), com casos reproduzidos, código antes/depois e validação. O [Roteiro para duas pessoas](docs/APRESENTACAO.md) divide a demonstração, os algoritmos e as correções. As branches atuais são `entrega-1`, `entrega-2`, `entrega-3` e `entrega-4`.
 
+O [comparativo da entrega 1 para a entrega 2](docs/COMPARATIVO_ENTREGAS_1_E_2.md) explica as mudanças de código e interface, com capturas reais, exemplos de álgebra e roteiro de demonstração. Também está disponível em [PDF](output/pdf/comparativo-entrega-1-entrega-2.pdf).
+
 ## Executar
 
 Requer **Python 3.10 ou superior**, usando somente a biblioteca padrão. Não precisa de Node.js, npm, Flask, Django ou instalação de pacotes.
