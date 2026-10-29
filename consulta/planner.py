@@ -189,8 +189,8 @@ def build_plan(query, optimized=False, data=None):
                 estimate = estimate_combination(root, branch["node"], ready)
                 pair_work = root["estimatedRows"] * branch["node"]["estimatedRows"]
                 candidates.append({"branch": branch, "predicates": ready, "estimate": estimate, "pair_work": pair_work})
-            # Primeiro escolhe a junção que deixa menos tuplas; em empate, a que examina menos pares.
-            chosen = min(candidates, key=lambda item: (item["estimate"], item["pair_work"], not bool(item["predicates"]), item["branch"]["position"]))
+            # Prioriza conexões (evita produto cartesiano); em seguida menor resultado e, em empate, menor trabalho.
+            chosen = min(candidates, key=lambda item: (not bool(item["predicates"]), item["estimate"], item["pair_work"], item["branch"]["position"]))
             branch = chosen["branch"]
             root = combine(root, branch["node"], chosen["predicates"])
             applied = {id(predicate) for predicate in chosen["predicates"]}

@@ -69,6 +69,19 @@ class ProcessorTests(unittest.TestCase):
         self.assertIn("menor trabalho", " ".join(result["optimized"]["notes"]))
         self.assertTrue(result["verified"])
 
+    def test_connected_join_precedes_smaller_cartesian_product(self):
+        result = process_query(
+            "SELECT c.Nome, p.idPedido, s.Descricao "
+            "FROM Cliente c "
+            "INNER JOIN Pedido p ON c.idCliente = p.Cliente_idCliente, "
+            "Status s "
+            "WHERE c.idCliente = 1 AND s.idStatus = 1"
+        )
+        first_comb = next(node for node in result["optimized"]["order"] if node["type"] in ("join", "cross"))
+        self.assertEqual(first_comb["type"], "join")
+        self.assertIn("c.idCliente = p.Cliente_idCliente", first_comb["label"])
+        self.assertTrue(result["verified"])
+
     def test_projection_preserves_join_keys(self):
         result = process_query("SELECT p.Nome FROM Produto p, Categoria c WHERE p.Categoria_idCategoria = c.idCategoria AND p.Preco > 100")
         projections = [node for node in result["optimized"]["order"] if node["type"] == "project" and not node["final"]]
