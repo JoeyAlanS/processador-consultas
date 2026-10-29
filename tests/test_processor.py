@@ -46,8 +46,28 @@ class ProcessorTests(unittest.TestCase):
 
     def test_restrictive_relation_is_first(self):
         result = process_query(EXAMPLES[2]["sql"])
-        self.assertEqual(result["optimizedResult"]["rows"], [["Delta Ltda", 4, 1150, "Pago"]])
+        rows = result["optimizedResult"]["rows"]
+        # O catálogo atualizado tem mais pedidos que atendem ao filtro do exemplo.
+        self.assertIn(["Delta Ltda", 4, 1150, "Pago"], rows)
+        self.assertEqual(len(rows), 7)
+        self.assertTrue(all(row[-1] == "Pago" for row in rows))
         self.assertEqual(result["optimized"]["order"][0]["alias"], "s")
+        self.assertTrue(result["verified"])
+
+    def test_join_order_uses_estimated_output_and_pair_work(self):
+        result = process_query(
+            "SELECT c.Nome, p.idPedido, s.Descricao "
+            "FROM Cliente c "
+            "INNER JOIN Pedido p ON c.idCliente = p.Cliente_idCliente "
+            "INNER JOIN Status s ON p.Status_idStatus = s.idStatus "
+            "WHERE p.idPedido = 1"
+        )
+        joins = [node for node in result["optimized"]["order"] if node["type"] == "join"]
+        self.assertEqual(len(joins), 2)
+        # Status tem menos linhas para comparar com o Pedido filtrado do que Cliente.
+        self.assertIn("p.Status_idStatus = s.idStatus", joins[0]["label"])
+        self.assertIn("menor trabalho", " ".join(result["optimized"]["notes"]))
+        self.assertTrue(result["verified"])
 
     def test_projection_preserves_join_keys(self):
         result = process_query("SELECT p.Nome FROM Produto p, Categoria c WHERE p.Categoria_idCategoria = c.idCategoria AND p.Preco > 100")
@@ -101,7 +121,8 @@ class ProcessorTests(unittest.TestCase):
 
     def test_disconnected_graph_keeps_required_cross_product(self):
         result = process_query("SELECT c.Nome, s.Descricao FROM Cliente c, Status s")
-        self.assertEqual(len(result["optimizedResult"]["rows"]), 12)
+        # 50 clientes × 3 status = 150 linhas no produto cartesiano.
+        self.assertEqual(len(result["optimizedResult"]["rows"]), 150)
         self.assertIn("cross", [node["type"] for node in result["optimized"]["order"]])
         self.assertTrue(any("necessário" in note for note in result["optimized"]["notes"]))
 

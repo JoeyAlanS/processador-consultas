@@ -64,24 +64,89 @@ def build_plan(query, optimized=False, data=None):
         data = SAMPLE_DATA
     next_id = 0
     notes = []
+    # Linhas estimadas a partir dos dados disponíveis, usadas para comparar junções.
+    estimated_records = {}
 
     def node(kind, children=None, **fields):
         nonlocal next_id
         next_id += 1
         return {"id": f"n{next_id}", "type": kind, "children": children or [], **fields}
 
+    def estimate_predicate(predicate, row):
+        """Avalia um predicado para estimar cardinalidade sem alterar a execução real."""
+        def value(operand):
+            return row[operand["key"]] if operand["type"] == "column" else operand["value"]
+
+        left, right = value(predicate["left"]), value(predicate["right"])
+        if left is None or right is None:
+            return False
+        operations = {
+            "=": lambda a, b: a == b,
+            "<>": lambda a, b: a != b,
+            ">": lambda a, b: a > b,
+            "<": lambda a, b: a < b,
+            ">=": lambda a, b: a >= b,
+            "<=": lambda a, b: a <= b,
+        }
+        try:
+            return operations[predicate["operator"]](left, right)
+        except (TypeError, KeyError):
+            # A execução normal emitirá a mensagem detalhada para tipos incompatíveis.
+            return False
+
     def scan(table):
-        return node("scan", table=table["table"], alias=table["alias"], estimatedRows=len(data[table["table"]]), columns=[f"{table['alias']}.{column}" for column in SCHEMA[table["table"]]])
+        result = node("scan", table=table["table"], alias=table["alias"], estimatedRows=len(data[table["table"]]), columns=[f"{table['alias']}.{column}" for column in SCHEMA[table["table"]]])
+        estimated_records[result["id"]] = [
+            {f"{table['alias']}.{column}": value for column, value in record.items()}
+            for record in data[table["table"]]
+        ]
+        return result
 
     def select(child, predicates):
-        return node("select", [child], predicates=predicates, columns=child["columns"], estimatedRows=child["estimatedRows"] * restriction(predicates))
+        child_records = estimated_records.get(child["id"])
+        result = node("select", [child], predicates=predicates, columns=child["columns"], estimatedRows=(sum(all(estimate_predicate(p, row) for p in predicates) for row in child_records) if child_records is not None else child["estimatedRows"] * restriction(predicates)))
+        if child_records is not None:
+            estimated_records[result["id"]] = [row for row in child_records if all(estimate_predicate(p, row) for p in predicates)]
+        return result
 
     def project(child, columns, final=False):
-        return node("project", [child], columns=columns, final=final, estimatedRows=child["estimatedRows"])
+        result = node("project", [child], columns=columns, final=final, estimatedRows=child["estimatedRows"])
+        child_records = estimated_records.get(child["id"])
+        if child_records is not None:
+            estimated_records[result["id"]] = [{key: row[key] for key in columns} for row in child_records]
+        return result
+
+    def estimate_combination(left, right, predicates):
+        """Conta resultados reais do candidato quando viável; usa heurística em volumes grandes."""
+        left_records = estimated_records.get(left["id"])
+        right_records = estimated_records.get(right["id"])
+        pair_count = left["estimatedRows"] * right["estimatedRows"]
+        if left_records is not None and right_records is not None and pair_count <= 200000:
+            count = 0
+            for left_row in left_records:
+                for right_row in right_records:
+                    row = {**left_row, **right_row}
+                    if all(estimate_predicate(predicate, row) for predicate in predicates):
+                        count += 1
+            return count
+        return pair_count * restriction(predicates)
 
     def combine(left, right, predicates=None):
         predicates = predicates or []
-        return node("join" if predicates else "cross", [left, right], predicates=predicates, columns=left["columns"] + right["columns"], estimatedRows=left["estimatedRows"] * right["estimatedRows"] * restriction(predicates))
+        estimate = estimate_combination(left, right, predicates)
+        result = node("join" if predicates else "cross", [left, right], predicates=predicates, columns=left["columns"] + right["columns"], estimatedRows=estimate)
+        left_records = estimated_records.get(left["id"])
+        right_records = estimated_records.get(right["id"])
+        pair_count = left["estimatedRows"] * right["estimatedRows"]
+        if left_records is not None and right_records is not None and pair_count <= 200000:
+            joined_records = []
+            for left_row in left_records:
+                for right_row in right_records:
+                    row = {**left_row, **right_row}
+                    if all(estimate_predicate(predicate, row) for predicate in predicates):
+                        joined_records.append(row)
+            estimated_records[result["id"]] = joined_records
+        return result
 
     if not optimized:
         root = scan(query["tables"][0])
@@ -121,9 +186,11 @@ def build_plan(query, optimized=False, data=None):
             for branch in branches:
                 scope = joined | {branch["alias"]}
                 ready = [predicate for predicate in pending if set(aliases(predicate)) <= scope]
-                estimate = root["estimatedRows"] * branch["node"]["estimatedRows"] * restriction(ready)
-                candidates.append({"branch": branch, "predicates": ready, "estimate": estimate})
-            chosen = min(candidates, key=lambda item: (not bool(item["predicates"]), item["estimate"], item["branch"]["position"]))
+                estimate = estimate_combination(root, branch["node"], ready)
+                pair_work = root["estimatedRows"] * branch["node"]["estimatedRows"]
+                candidates.append({"branch": branch, "predicates": ready, "estimate": estimate, "pair_work": pair_work})
+            # Primeiro escolhe a junção que deixa menos tuplas; em empate, a que examina menos pares.
+            chosen = min(candidates, key=lambda item: (item["estimate"], item["pair_work"], not bool(item["predicates"]), item["branch"]["position"]))
             branch = chosen["branch"]
             root = combine(root, branch["node"], chosen["predicates"])
             applied = {id(predicate) for predicate in chosen["predicates"]}
@@ -131,7 +198,7 @@ def build_plan(query, optimized=False, data=None):
             joined.add(branch["alias"])
             branches.remove(branch)
             if chosen["predicates"]:
-                notes.append(f"Junção com {branch['alias']}: {' AND '.join(map(predicate_text, chosen['predicates']))}. Prioriza ligação entre tabelas e menor resultado estimado.")
+                notes.append(f"Junção com {branch['alias']}: {' AND '.join(map(predicate_text, chosen['predicates']))}. Cardinalidade estimada após a junção: {format_estimate(chosen['estimate'])} tuplas; custo candidato: {format_estimate(chosen['pair_work'])} pares examinados. A ordem prioriza menor resultado e, em empate, menor trabalho.")
             else:
                 notes.append(f"Produto cartesiano necessário com {branch['alias']}: não há predicado ligando essa relação às já processadas.")
         if constants:

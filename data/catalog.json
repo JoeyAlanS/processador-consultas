@@ -192,6 +192,420 @@
         "Senha": "demo-delta",
         "TipoCliente_idTipoCliente": 2,
         "DataRegistro": "2026-04-01"
+      },
+      {
+        "idCliente": 5,
+        "Nome": "Eduarda Batista",
+        "Email": "cliente05@example.com",
+        "Nascimento": "1974-02-16",
+        "Senha": "demo-cliente-05",
+        "TipoCliente_idTipoCliente": 2,
+        "DataRegistro": "2026-05-11"
+      },
+      {
+        "idCliente": 6,
+        "Nome": "Felipe Andrade",
+        "Email": "cliente06@example.com",
+        "Nascimento": "1981-07-19",
+        "Senha": "demo-cliente-06",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-06-13"
+      },
+      {
+        "idCliente": 7,
+        "Nome": "Gabriela Santos",
+        "Email": "cliente07@example.com",
+        "Nascimento": "1988-12-22",
+        "Senha": "demo-cliente-07",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-07-15"
+      },
+      {
+        "idCliente": 8,
+        "Nome": "Henrique Almeida",
+        "Email": "cliente08@example.com",
+        "Nascimento": "1995-05-25",
+        "Senha": "demo-cliente-08",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-08-17"
+      },
+      {
+        "idCliente": 9,
+        "Nome": "Isabela Barros",
+        "Email": "cliente09@example.com",
+        "Nascimento": "1971-10-01",
+        "Senha": "demo-cliente-09",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-09-19"
+      },
+      {
+        "idCliente": 10,
+        "Nome": "João Cavalcante",
+        "Email": "cliente10@example.com",
+        "Nascimento": "1978-03-04",
+        "Senha": "demo-cliente-10",
+        "TipoCliente_idTipoCliente": 2,
+        "DataRegistro": "2026-01-21"
+      },
+      {
+        "idCliente": 11,
+        "Nome": "Karen Campos",
+        "Email": "cliente11@example.com",
+        "Nascimento": "1985-08-07",
+        "Senha": "demo-cliente-11",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-02-23"
+      },
+      {
+        "idCliente": 12,
+        "Nome": "Lucas Rezende",
+        "Email": "cliente12@example.com",
+        "Nascimento": "1992-01-10",
+        "Senha": "demo-cliente-12",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-03-25"
+      },
+      {
+        "idCliente": 13,
+        "Nome": "Mariana Dantas",
+        "Email": "cliente13@example.com",
+        "Nascimento": "1999-06-13",
+        "Senha": "demo-cliente-13",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-04-27"
+      },
+      {
+        "idCliente": 14,
+        "Nome": "Nicolas Oliveira",
+        "Email": "cliente14@example.com",
+        "Nascimento": "1975-11-16",
+        "Senha": "demo-cliente-14",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-05-02"
+      },
+      {
+        "idCliente": 15,
+        "Nome": "Olivia Araújo",
+        "Email": "cliente15@example.com",
+        "Nascimento": "1982-04-19",
+        "Senha": "demo-cliente-15",
+        "TipoCliente_idTipoCliente": 2,
+        "DataRegistro": "2026-06-04"
+      },
+      {
+        "idCliente": 16,
+        "Nome": "Pedro Cardoso",
+        "Email": "cliente16@example.com",
+        "Nascimento": "1989-09-22",
+        "Senha": "demo-cliente-16",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-07-06"
+      },
+      {
+        "idCliente": 17,
+        "Nome": "Quitéria Correia",
+        "Email": "cliente17@example.com",
+        "Nascimento": "1996-02-25",
+        "Senha": "demo-cliente-17",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-08-08"
+      },
+      {
+        "idCliente": 18,
+        "Nome": "Rafael Lopes",
+        "Email": "cliente18@example.com",
+        "Nascimento": "1972-07-01",
+        "Senha": "demo-cliente-18",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-09-10"
+      },
+      {
+        "idCliente": 19,
+        "Nome": "Sabrina Machado",
+        "Email": "cliente19@example.com",
+        "Nascimento": "1979-12-04",
+        "Senha": "demo-cliente-19",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-01-12"
+      },
+      {
+        "idCliente": 20,
+        "Nome": "Thiago Peixoto",
+        "Email": "cliente20@example.com",
+        "Nascimento": "1986-05-07",
+        "Senha": "demo-cliente-20",
+        "TipoCliente_idTipoCliente": 2,
+        "DataRegistro": "2026-02-14"
+      },
+      {
+        "idCliente": 21,
+        "Nome": "Ursula Pereira",
+        "Email": "cliente21@example.com",
+        "Nascimento": "1993-10-10",
+        "Senha": "demo-cliente-21",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-03-16"
+      },
+      {
+        "idCliente": 22,
+        "Nome": "Vinícius Ribeiro",
+        "Email": "cliente22@example.com",
+        "Nascimento": "2000-03-13",
+        "Senha": "demo-cliente-22",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-04-18"
+      },
+      {
+        "idCliente": 23,
+        "Nome": "Wesley Teixeira",
+        "Email": "cliente23@example.com",
+        "Nascimento": "1976-08-16",
+        "Senha": "demo-cliente-23",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-05-20"
+      },
+      {
+        "idCliente": 24,
+        "Nome": "Yasmin Monteiro",
+        "Email": "cliente24@example.com",
+        "Nascimento": "1983-01-19",
+        "Senha": "demo-cliente-24",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-06-22"
+      },
+      {
+        "idCliente": 25,
+        "Nome": "André Castro",
+        "Email": "cliente25@example.com",
+        "Nascimento": "1990-06-22",
+        "Senha": "demo-cliente-25",
+        "TipoCliente_idTipoCliente": 2,
+        "DataRegistro": "2026-07-24"
+      },
+      {
+        "idCliente": 26,
+        "Nome": "Beatriz Azevedo",
+        "Email": "cliente26@example.com",
+        "Nascimento": "1997-11-25",
+        "Senha": "demo-cliente-26",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-08-26"
+      },
+      {
+        "idCliente": 27,
+        "Nome": "Caio Xavier",
+        "Email": "cliente27@example.com",
+        "Nascimento": "1973-04-01",
+        "Senha": "demo-cliente-27",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-09-01"
+      },
+      {
+        "idCliente": 28,
+        "Nome": "Débora Lima",
+        "Email": "cliente28@example.com",
+        "Nascimento": "1980-09-04",
+        "Senha": "demo-cliente-28",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-01-03"
+      },
+      {
+        "idCliente": 29,
+        "Nome": "Enzo Carvalho",
+        "Email": "cliente29@example.com",
+        "Nascimento": "1987-02-07",
+        "Senha": "demo-cliente-29",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-02-05"
+      },
+      {
+        "idCliente": 30,
+        "Nome": "Fernanda Freitas",
+        "Email": "cliente30@example.com",
+        "Nascimento": "1994-07-10",
+        "Senha": "demo-cliente-30",
+        "TipoCliente_idTipoCliente": 2,
+        "DataRegistro": "2026-03-07"
+      },
+      {
+        "idCliente": 31,
+        "Nome": "Gustavo Mendes",
+        "Email": "cliente31@example.com",
+        "Nascimento": "1970-12-13",
+        "Senha": "demo-cliente-31",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-04-09"
+      },
+      {
+        "idCliente": 32,
+        "Nome": "Helena Farias",
+        "Email": "cliente32@example.com",
+        "Nascimento": "1977-05-16",
+        "Senha": "demo-cliente-32",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-05-11"
+      },
+      {
+        "idCliente": 33,
+        "Nome": "Igor Borges",
+        "Email": "cliente33@example.com",
+        "Nascimento": "1984-10-19",
+        "Senha": "demo-cliente-33",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-06-13"
+      },
+      {
+        "idCliente": 34,
+        "Nome": "Juliana Queiroz",
+        "Email": "cliente34@example.com",
+        "Nascimento": "1991-03-22",
+        "Senha": "demo-cliente-34",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-07-15"
+      },
+      {
+        "idCliente": 35,
+        "Nome": "Kauã Costa",
+        "Email": "cliente35@example.com",
+        "Nascimento": "1998-08-25",
+        "Senha": "demo-cliente-35",
+        "TipoCliente_idTipoCliente": 2,
+        "DataRegistro": "2026-08-17"
+      },
+      {
+        "idCliente": 36,
+        "Nome": "Larissa Martins",
+        "Email": "cliente36@example.com",
+        "Nascimento": "1974-01-01",
+        "Senha": "demo-cliente-36",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-09-19"
+      },
+      {
+        "idCliente": 37,
+        "Nome": "Marcelo Dias",
+        "Email": "cliente37@example.com",
+        "Nascimento": "1981-06-04",
+        "Senha": "demo-cliente-37",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-01-21"
+      },
+      {
+        "idCliente": 38,
+        "Nome": "Natália Vieira",
+        "Email": "cliente38@example.com",
+        "Nascimento": "1988-11-07",
+        "Senha": "demo-cliente-38",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-02-23"
+      },
+      {
+        "idCliente": 39,
+        "Nome": "Otávio Batista",
+        "Email": "cliente39@example.com",
+        "Nascimento": "1995-04-10",
+        "Senha": "demo-cliente-39",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-03-25"
+      },
+      {
+        "idCliente": 40,
+        "Nome": "Paula Tavares",
+        "Email": "cliente40@example.com",
+        "Nascimento": "1971-09-13",
+        "Senha": "demo-cliente-40",
+        "TipoCliente_idTipoCliente": 2,
+        "DataRegistro": "2026-04-27"
+      },
+      {
+        "idCliente": 41,
+        "Nome": "Renata Silva",
+        "Email": "cliente41@example.com",
+        "Nascimento": "1978-02-16",
+        "Senha": "demo-cliente-41",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-05-02"
+      },
+      {
+        "idCliente": 42,
+        "Nome": "Samuel Almeida",
+        "Email": "cliente42@example.com",
+        "Nascimento": "1985-07-19",
+        "Senha": "demo-cliente-42",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-06-04"
+      },
+      {
+        "idCliente": 43,
+        "Nome": "Talita Rocha",
+        "Email": "cliente43@example.com",
+        "Nascimento": "1992-12-22",
+        "Senha": "demo-cliente-43",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-07-06"
+      },
+      {
+        "idCliente": 44,
+        "Nome": "Vitor Moreira",
+        "Email": "cliente44@example.com",
+        "Nascimento": "1999-05-25",
+        "Senha": "demo-cliente-44",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-08-08"
+      },
+      {
+        "idCliente": 45,
+        "Nome": "William Campos",
+        "Email": "cliente45@example.com",
+        "Nascimento": "1975-10-01",
+        "Senha": "demo-cliente-45",
+        "TipoCliente_idTipoCliente": 2,
+        "DataRegistro": "2026-09-10"
+      },
+      {
+        "idCliente": 46,
+        "Nome": "Alice Ramos",
+        "Email": "cliente46@example.com",
+        "Nascimento": "1982-03-04",
+        "Senha": "demo-cliente-46",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-01-12"
+      },
+      {
+        "idCliente": 47,
+        "Nome": "Breno Andrade",
+        "Email": "cliente47@example.com",
+        "Nascimento": "1989-08-07",
+        "Senha": "demo-cliente-47",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-02-14"
+      },
+      {
+        "idCliente": 48,
+        "Nome": "Cecília Oliveira",
+        "Email": "cliente48@example.com",
+        "Nascimento": "1996-01-10",
+        "Senha": "demo-cliente-48",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-03-16"
+      },
+      {
+        "idCliente": 49,
+        "Nome": "Davi Nascimento",
+        "Email": "cliente49@example.com",
+        "Nascimento": "1972-06-13",
+        "Senha": "demo-cliente-49",
+        "TipoCliente_idTipoCliente": 1,
+        "DataRegistro": "2026-04-18"
+      },
+      {
+        "idCliente": 50,
+        "Nome": "Elisa Barros",
+        "Email": "cliente50@example.com",
+        "Nascimento": "1979-11-16",
+        "Senha": "demo-cliente-50",
+        "TipoCliente_idTipoCliente": 2,
+        "DataRegistro": "2026-05-20"
       }
     ],
     "TipoEndereco": [
@@ -256,6 +670,604 @@
         "CEP": "60000002",
         "TipoEndereco_idTipoEndereco": 2,
         "Cliente_idCliente": 4
+      },
+      {
+        "idEndereco": 5,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Beira Rio",
+        "Numero": "115",
+        "Complemento": null,
+        "Bairro": "Boa Viagem",
+        "Cidade": "Recife",
+        "UF": "PE",
+        "CEP": "60000005",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 5
+      },
+      {
+        "idEndereco": 6,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua do Comércio",
+        "Numero": "118",
+        "Complemento": "Apto 6",
+        "Bairro": "Tirol",
+        "Cidade": "Natal",
+        "UF": "RN",
+        "CEP": "60000006",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 6
+      },
+      {
+        "idEndereco": 7,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua Nova",
+        "Numero": "121",
+        "Complemento": null,
+        "Bairro": "Centro",
+        "Cidade": "Teresina",
+        "UF": "PI",
+        "CEP": "60000007",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 7
+      },
+      {
+        "idEndereco": 8,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Brasil",
+        "Numero": "124",
+        "Complemento": null,
+        "Bairro": "Manaíra",
+        "Cidade": "João Pessoa",
+        "UF": "PB",
+        "CEP": "60000008",
+        "TipoEndereco_idTipoEndereco": 2,
+        "Cliente_idCliente": 8
+      },
+      {
+        "idEndereco": 9,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua do Sol",
+        "Numero": "127",
+        "Complemento": "Apto 9",
+        "Bairro": "Pituba",
+        "Cidade": "Salvador",
+        "UF": "BA",
+        "CEP": "60000009",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 9
+      },
+      {
+        "idEndereco": 10,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Flores",
+        "Numero": "130",
+        "Complemento": null,
+        "Bairro": "Renascença",
+        "Cidade": "São Luís",
+        "UF": "MA",
+        "CEP": "60000010",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 10
+      },
+      {
+        "idEndereco": 11,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Acácias",
+        "Numero": "133",
+        "Complemento": null,
+        "Bairro": "Centro",
+        "Cidade": "Fortaleza",
+        "UF": "CE",
+        "CEP": "60000011",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 11
+      },
+      {
+        "idEndereco": 12,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Central",
+        "Numero": "136",
+        "Complemento": "Apto 12",
+        "Bairro": "Jurema",
+        "Cidade": "Caucaia",
+        "UF": "CE",
+        "CEP": "60000012",
+        "TipoEndereco_idTipoEndereco": 2,
+        "Cliente_idCliente": 12
+      },
+      {
+        "idEndereco": 13,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua São José",
+        "Numero": "139",
+        "Complemento": null,
+        "Bairro": "Pajuçara",
+        "Cidade": "Maracanaú",
+        "UF": "CE",
+        "CEP": "60000013",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 13
+      },
+      {
+        "idEndereco": 14,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Palmeiras",
+        "Numero": "142",
+        "Complemento": null,
+        "Bairro": "Junco",
+        "Cidade": "Sobral",
+        "UF": "CE",
+        "CEP": "60000014",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 14
+      },
+      {
+        "idEndereco": 15,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Beira Rio",
+        "Numero": "145",
+        "Complemento": "Apto 15",
+        "Bairro": "Boa Viagem",
+        "Cidade": "Recife",
+        "UF": "PE",
+        "CEP": "60000015",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 15
+      },
+      {
+        "idEndereco": 16,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua do Comércio",
+        "Numero": "148",
+        "Complemento": null,
+        "Bairro": "Tirol",
+        "Cidade": "Natal",
+        "UF": "RN",
+        "CEP": "60000016",
+        "TipoEndereco_idTipoEndereco": 2,
+        "Cliente_idCliente": 16
+      },
+      {
+        "idEndereco": 17,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua Nova",
+        "Numero": "151",
+        "Complemento": null,
+        "Bairro": "Centro",
+        "Cidade": "Teresina",
+        "UF": "PI",
+        "CEP": "60000017",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 17
+      },
+      {
+        "idEndereco": 18,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Brasil",
+        "Numero": "154",
+        "Complemento": "Apto 18",
+        "Bairro": "Manaíra",
+        "Cidade": "João Pessoa",
+        "UF": "PB",
+        "CEP": "60000018",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 18
+      },
+      {
+        "idEndereco": 19,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua do Sol",
+        "Numero": "157",
+        "Complemento": null,
+        "Bairro": "Pituba",
+        "Cidade": "Salvador",
+        "UF": "BA",
+        "CEP": "60000019",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 19
+      },
+      {
+        "idEndereco": 20,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Flores",
+        "Numero": "160",
+        "Complemento": null,
+        "Bairro": "Renascença",
+        "Cidade": "São Luís",
+        "UF": "MA",
+        "CEP": "60000020",
+        "TipoEndereco_idTipoEndereco": 2,
+        "Cliente_idCliente": 20
+      },
+      {
+        "idEndereco": 21,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Acácias",
+        "Numero": "163",
+        "Complemento": "Apto 21",
+        "Bairro": "Centro",
+        "Cidade": "Fortaleza",
+        "UF": "CE",
+        "CEP": "60000021",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 21
+      },
+      {
+        "idEndereco": 22,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Central",
+        "Numero": "166",
+        "Complemento": null,
+        "Bairro": "Jurema",
+        "Cidade": "Caucaia",
+        "UF": "CE",
+        "CEP": "60000022",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 22
+      },
+      {
+        "idEndereco": 23,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua São José",
+        "Numero": "169",
+        "Complemento": null,
+        "Bairro": "Pajuçara",
+        "Cidade": "Maracanaú",
+        "UF": "CE",
+        "CEP": "60000023",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 23
+      },
+      {
+        "idEndereco": 24,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Palmeiras",
+        "Numero": "172",
+        "Complemento": "Apto 24",
+        "Bairro": "Junco",
+        "Cidade": "Sobral",
+        "UF": "CE",
+        "CEP": "60000024",
+        "TipoEndereco_idTipoEndereco": 2,
+        "Cliente_idCliente": 24
+      },
+      {
+        "idEndereco": 25,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Beira Rio",
+        "Numero": "175",
+        "Complemento": null,
+        "Bairro": "Boa Viagem",
+        "Cidade": "Recife",
+        "UF": "PE",
+        "CEP": "60000025",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 25
+      },
+      {
+        "idEndereco": 26,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua do Comércio",
+        "Numero": "178",
+        "Complemento": null,
+        "Bairro": "Tirol",
+        "Cidade": "Natal",
+        "UF": "RN",
+        "CEP": "60000026",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 26
+      },
+      {
+        "idEndereco": 27,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua Nova",
+        "Numero": "181",
+        "Complemento": "Apto 27",
+        "Bairro": "Centro",
+        "Cidade": "Teresina",
+        "UF": "PI",
+        "CEP": "60000027",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 27
+      },
+      {
+        "idEndereco": 28,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Brasil",
+        "Numero": "184",
+        "Complemento": null,
+        "Bairro": "Manaíra",
+        "Cidade": "João Pessoa",
+        "UF": "PB",
+        "CEP": "60000028",
+        "TipoEndereco_idTipoEndereco": 2,
+        "Cliente_idCliente": 28
+      },
+      {
+        "idEndereco": 29,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua do Sol",
+        "Numero": "187",
+        "Complemento": null,
+        "Bairro": "Pituba",
+        "Cidade": "Salvador",
+        "UF": "BA",
+        "CEP": "60000029",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 29
+      },
+      {
+        "idEndereco": 30,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Flores",
+        "Numero": "190",
+        "Complemento": "Apto 30",
+        "Bairro": "Renascença",
+        "Cidade": "São Luís",
+        "UF": "MA",
+        "CEP": "60000030",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 30
+      },
+      {
+        "idEndereco": 31,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Acácias",
+        "Numero": "193",
+        "Complemento": null,
+        "Bairro": "Centro",
+        "Cidade": "Fortaleza",
+        "UF": "CE",
+        "CEP": "60000031",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 31
+      },
+      {
+        "idEndereco": 32,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Central",
+        "Numero": "196",
+        "Complemento": null,
+        "Bairro": "Jurema",
+        "Cidade": "Caucaia",
+        "UF": "CE",
+        "CEP": "60000032",
+        "TipoEndereco_idTipoEndereco": 2,
+        "Cliente_idCliente": 32
+      },
+      {
+        "idEndereco": 33,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua São José",
+        "Numero": "199",
+        "Complemento": "Apto 33",
+        "Bairro": "Pajuçara",
+        "Cidade": "Maracanaú",
+        "UF": "CE",
+        "CEP": "60000033",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 33
+      },
+      {
+        "idEndereco": 34,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Palmeiras",
+        "Numero": "202",
+        "Complemento": null,
+        "Bairro": "Junco",
+        "Cidade": "Sobral",
+        "UF": "CE",
+        "CEP": "60000034",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 34
+      },
+      {
+        "idEndereco": 35,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Beira Rio",
+        "Numero": "205",
+        "Complemento": null,
+        "Bairro": "Boa Viagem",
+        "Cidade": "Recife",
+        "UF": "PE",
+        "CEP": "60000035",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 35
+      },
+      {
+        "idEndereco": 36,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua do Comércio",
+        "Numero": "208",
+        "Complemento": "Apto 36",
+        "Bairro": "Tirol",
+        "Cidade": "Natal",
+        "UF": "RN",
+        "CEP": "60000036",
+        "TipoEndereco_idTipoEndereco": 2,
+        "Cliente_idCliente": 36
+      },
+      {
+        "idEndereco": 37,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua Nova",
+        "Numero": "211",
+        "Complemento": null,
+        "Bairro": "Centro",
+        "Cidade": "Teresina",
+        "UF": "PI",
+        "CEP": "60000037",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 37
+      },
+      {
+        "idEndereco": 38,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Brasil",
+        "Numero": "214",
+        "Complemento": null,
+        "Bairro": "Manaíra",
+        "Cidade": "João Pessoa",
+        "UF": "PB",
+        "CEP": "60000038",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 38
+      },
+      {
+        "idEndereco": 39,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua do Sol",
+        "Numero": "217",
+        "Complemento": "Apto 39",
+        "Bairro": "Pituba",
+        "Cidade": "Salvador",
+        "UF": "BA",
+        "CEP": "60000039",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 39
+      },
+      {
+        "idEndereco": 40,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Flores",
+        "Numero": "220",
+        "Complemento": null,
+        "Bairro": "Renascença",
+        "Cidade": "São Luís",
+        "UF": "MA",
+        "CEP": "60000040",
+        "TipoEndereco_idTipoEndereco": 2,
+        "Cliente_idCliente": 40
+      },
+      {
+        "idEndereco": 41,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Acácias",
+        "Numero": "223",
+        "Complemento": null,
+        "Bairro": "Centro",
+        "Cidade": "Fortaleza",
+        "UF": "CE",
+        "CEP": "60000041",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 41
+      },
+      {
+        "idEndereco": 42,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Central",
+        "Numero": "226",
+        "Complemento": "Apto 42",
+        "Bairro": "Jurema",
+        "Cidade": "Caucaia",
+        "UF": "CE",
+        "CEP": "60000042",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 42
+      },
+      {
+        "idEndereco": 43,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua São José",
+        "Numero": "229",
+        "Complemento": null,
+        "Bairro": "Pajuçara",
+        "Cidade": "Maracanaú",
+        "UF": "CE",
+        "CEP": "60000043",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 43
+      },
+      {
+        "idEndereco": 44,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Palmeiras",
+        "Numero": "232",
+        "Complemento": null,
+        "Bairro": "Junco",
+        "Cidade": "Sobral",
+        "UF": "CE",
+        "CEP": "60000044",
+        "TipoEndereco_idTipoEndereco": 2,
+        "Cliente_idCliente": 44
+      },
+      {
+        "idEndereco": 45,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Beira Rio",
+        "Numero": "235",
+        "Complemento": "Apto 45",
+        "Bairro": "Boa Viagem",
+        "Cidade": "Recife",
+        "UF": "PE",
+        "CEP": "60000045",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 45
+      },
+      {
+        "idEndereco": 46,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua do Comércio",
+        "Numero": "238",
+        "Complemento": null,
+        "Bairro": "Tirol",
+        "Cidade": "Natal",
+        "UF": "RN",
+        "CEP": "60000046",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 46
+      },
+      {
+        "idEndereco": 47,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua Nova",
+        "Numero": "241",
+        "Complemento": null,
+        "Bairro": "Centro",
+        "Cidade": "Teresina",
+        "UF": "PI",
+        "CEP": "60000047",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 47
+      },
+      {
+        "idEndereco": 48,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Av. Brasil",
+        "Numero": "244",
+        "Complemento": "Apto 48",
+        "Bairro": "Manaíra",
+        "Cidade": "João Pessoa",
+        "UF": "PB",
+        "CEP": "60000048",
+        "TipoEndereco_idTipoEndereco": 2,
+        "Cliente_idCliente": 48
+      },
+      {
+        "idEndereco": 49,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua do Sol",
+        "Numero": "247",
+        "Complemento": null,
+        "Bairro": "Pituba",
+        "Cidade": "Salvador",
+        "UF": "BA",
+        "CEP": "60000049",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 49
+      },
+      {
+        "idEndereco": 50,
+        "EnderecoPadrao": 1,
+        "Logradouro": "Rua das Flores",
+        "Numero": "250",
+        "Complemento": null,
+        "Bairro": "Renascença",
+        "Cidade": "São Luís",
+        "UF": "MA",
+        "CEP": "60000050",
+        "TipoEndereco_idTipoEndereco": 1,
+        "Cliente_idCliente": 50
       }
     ],
     "Telefone": [
@@ -274,6 +1286,190 @@
       {
         "Numero": "8530000004",
         "Cliente_idCliente": 4
+      },
+      {
+        "Numero": "85980000005",
+        "Cliente_idCliente": 5
+      },
+      {
+        "Numero": "85980000006",
+        "Cliente_idCliente": 6
+      },
+      {
+        "Numero": "85980000007",
+        "Cliente_idCliente": 7
+      },
+      {
+        "Numero": "85980000008",
+        "Cliente_idCliente": 8
+      },
+      {
+        "Numero": "85980000009",
+        "Cliente_idCliente": 9
+      },
+      {
+        "Numero": "85980000010",
+        "Cliente_idCliente": 10
+      },
+      {
+        "Numero": "85980000011",
+        "Cliente_idCliente": 11
+      },
+      {
+        "Numero": "85980000012",
+        "Cliente_idCliente": 12
+      },
+      {
+        "Numero": "85980000013",
+        "Cliente_idCliente": 13
+      },
+      {
+        "Numero": "85980000014",
+        "Cliente_idCliente": 14
+      },
+      {
+        "Numero": "85980000015",
+        "Cliente_idCliente": 15
+      },
+      {
+        "Numero": "85980000016",
+        "Cliente_idCliente": 16
+      },
+      {
+        "Numero": "85980000017",
+        "Cliente_idCliente": 17
+      },
+      {
+        "Numero": "85980000018",
+        "Cliente_idCliente": 18
+      },
+      {
+        "Numero": "85980000019",
+        "Cliente_idCliente": 19
+      },
+      {
+        "Numero": "85980000020",
+        "Cliente_idCliente": 20
+      },
+      {
+        "Numero": "85980000021",
+        "Cliente_idCliente": 21
+      },
+      {
+        "Numero": "85980000022",
+        "Cliente_idCliente": 22
+      },
+      {
+        "Numero": "85980000023",
+        "Cliente_idCliente": 23
+      },
+      {
+        "Numero": "85980000024",
+        "Cliente_idCliente": 24
+      },
+      {
+        "Numero": "85980000025",
+        "Cliente_idCliente": 25
+      },
+      {
+        "Numero": "85980000026",
+        "Cliente_idCliente": 26
+      },
+      {
+        "Numero": "85980000027",
+        "Cliente_idCliente": 27
+      },
+      {
+        "Numero": "85980000028",
+        "Cliente_idCliente": 28
+      },
+      {
+        "Numero": "85980000029",
+        "Cliente_idCliente": 29
+      },
+      {
+        "Numero": "85980000030",
+        "Cliente_idCliente": 30
+      },
+      {
+        "Numero": "85980000031",
+        "Cliente_idCliente": 31
+      },
+      {
+        "Numero": "85980000032",
+        "Cliente_idCliente": 32
+      },
+      {
+        "Numero": "85980000033",
+        "Cliente_idCliente": 33
+      },
+      {
+        "Numero": "85980000034",
+        "Cliente_idCliente": 34
+      },
+      {
+        "Numero": "85980000035",
+        "Cliente_idCliente": 35
+      },
+      {
+        "Numero": "85980000036",
+        "Cliente_idCliente": 36
+      },
+      {
+        "Numero": "85980000037",
+        "Cliente_idCliente": 37
+      },
+      {
+        "Numero": "85980000038",
+        "Cliente_idCliente": 38
+      },
+      {
+        "Numero": "85980000039",
+        "Cliente_idCliente": 39
+      },
+      {
+        "Numero": "85980000040",
+        "Cliente_idCliente": 40
+      },
+      {
+        "Numero": "85980000041",
+        "Cliente_idCliente": 41
+      },
+      {
+        "Numero": "85980000042",
+        "Cliente_idCliente": 42
+      },
+      {
+        "Numero": "85980000043",
+        "Cliente_idCliente": 43
+      },
+      {
+        "Numero": "85980000044",
+        "Cliente_idCliente": 44
+      },
+      {
+        "Numero": "85980000045",
+        "Cliente_idCliente": 45
+      },
+      {
+        "Numero": "85980000046",
+        "Cliente_idCliente": 46
+      },
+      {
+        "Numero": "85980000047",
+        "Cliente_idCliente": 47
+      },
+      {
+        "Numero": "85980000048",
+        "Cliente_idCliente": 48
+      },
+      {
+        "Numero": "85980000049",
+        "Cliente_idCliente": 49
+      },
+      {
+        "Numero": "85980000050",
+        "Cliente_idCliente": 50
       }
     ],
     "Status": [
@@ -332,6 +1528,328 @@
         "DataPedido": "2026-10-01",
         "ValorTotalPedido": 640,
         "Cliente_idCliente": 2
+      },
+      {
+        "idPedido": 7,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-05-16",
+        "ValorTotalPedido": 597.0,
+        "Cliente_idCliente": 5
+      },
+      {
+        "idPedido": 8,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-06-19",
+        "ValorTotalPedido": 950.0,
+        "Cliente_idCliente": 6
+      },
+      {
+        "idPedido": 9,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-07-22",
+        "ValorTotalPedido": 10.0,
+        "Cliente_idCliente": 7
+      },
+      {
+        "idPedido": 10,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-08-25",
+        "ValorTotalPedido": 960.0,
+        "Cliente_idCliente": 8
+      },
+      {
+        "idPedido": 11,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-09-01",
+        "ValorTotalPedido": 3500.0,
+        "Cliente_idCliente": 9
+      },
+      {
+        "idPedido": 12,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-01-04",
+        "ValorTotalPedido": 179.8,
+        "Cliente_idCliente": 10
+      },
+      {
+        "idPedido": 13,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-02-07",
+        "ValorTotalPedido": 747.0,
+        "Cliente_idCliente": 11
+      },
+      {
+        "idPedido": 14,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-03-10",
+        "ValorTotalPedido": 25.0,
+        "Cliente_idCliente": 12
+      },
+      {
+        "idPedido": 15,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-04-13",
+        "ValorTotalPedido": 398.0,
+        "Cliente_idCliente": 13
+      },
+      {
+        "idPedido": 16,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-05-16",
+        "ValorTotalPedido": 2850.0,
+        "Cliente_idCliente": 14
+      },
+      {
+        "idPedido": 17,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-06-19",
+        "ValorTotalPedido": 5.0,
+        "Cliente_idCliente": 15
+      },
+      {
+        "idPedido": 18,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-07-22",
+        "ValorTotalPedido": 640.0,
+        "Cliente_idCliente": 16
+      },
+      {
+        "idPedido": 19,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-08-25",
+        "ValorTotalPedido": 10500.0,
+        "Cliente_idCliente": 17
+      },
+      {
+        "idPedido": 20,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-09-01",
+        "ValorTotalPedido": 89.9,
+        "Cliente_idCliente": 18
+      },
+      {
+        "idPedido": 21,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-01-04",
+        "ValorTotalPedido": 498.0,
+        "Cliente_idCliente": 19
+      },
+      {
+        "idPedido": 22,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-02-07",
+        "ValorTotalPedido": 75.0,
+        "Cliente_idCliente": 20
+      },
+      {
+        "idPedido": 23,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-03-10",
+        "ValorTotalPedido": 199.0,
+        "Cliente_idCliente": 21
+      },
+      {
+        "idPedido": 24,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-04-13",
+        "ValorTotalPedido": 1900.0,
+        "Cliente_idCliente": 22
+      },
+      {
+        "idPedido": 25,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-05-16",
+        "ValorTotalPedido": 15.0,
+        "Cliente_idCliente": 23
+      },
+      {
+        "idPedido": 26,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-06-19",
+        "ValorTotalPedido": 320.0,
+        "Cliente_idCliente": 24
+      },
+      {
+        "idPedido": 27,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-07-22",
+        "ValorTotalPedido": 7000.0,
+        "Cliente_idCliente": 25
+      },
+      {
+        "idPedido": 28,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-08-25",
+        "ValorTotalPedido": 269.7,
+        "Cliente_idCliente": 26
+      },
+      {
+        "idPedido": 29,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-09-01",
+        "ValorTotalPedido": 249.0,
+        "Cliente_idCliente": 27
+      },
+      {
+        "idPedido": 30,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-01-04",
+        "ValorTotalPedido": 50.0,
+        "Cliente_idCliente": 28
+      },
+      {
+        "idPedido": 31,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-02-07",
+        "ValorTotalPedido": 597.0,
+        "Cliente_idCliente": 29
+      },
+      {
+        "idPedido": 32,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-03-10",
+        "ValorTotalPedido": 950.0,
+        "Cliente_idCliente": 30
+      },
+      {
+        "idPedido": 33,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-04-13",
+        "ValorTotalPedido": 10.0,
+        "Cliente_idCliente": 31
+      },
+      {
+        "idPedido": 34,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-05-16",
+        "ValorTotalPedido": 960.0,
+        "Cliente_idCliente": 32
+      },
+      {
+        "idPedido": 35,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-06-19",
+        "ValorTotalPedido": 3500.0,
+        "Cliente_idCliente": 33
+      },
+      {
+        "idPedido": 36,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-07-22",
+        "ValorTotalPedido": 179.8,
+        "Cliente_idCliente": 34
+      },
+      {
+        "idPedido": 37,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-08-25",
+        "ValorTotalPedido": 747.0,
+        "Cliente_idCliente": 35
+      },
+      {
+        "idPedido": 38,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-09-01",
+        "ValorTotalPedido": 25.0,
+        "Cliente_idCliente": 36
+      },
+      {
+        "idPedido": 39,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-01-04",
+        "ValorTotalPedido": 398.0,
+        "Cliente_idCliente": 37
+      },
+      {
+        "idPedido": 40,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-02-07",
+        "ValorTotalPedido": 2850.0,
+        "Cliente_idCliente": 38
+      },
+      {
+        "idPedido": 41,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-03-10",
+        "ValorTotalPedido": 5.0,
+        "Cliente_idCliente": 39
+      },
+      {
+        "idPedido": 42,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-04-13",
+        "ValorTotalPedido": 640.0,
+        "Cliente_idCliente": 40
+      },
+      {
+        "idPedido": 43,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-05-16",
+        "ValorTotalPedido": 10500.0,
+        "Cliente_idCliente": 41
+      },
+      {
+        "idPedido": 44,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-06-19",
+        "ValorTotalPedido": 89.9,
+        "Cliente_idCliente": 42
+      },
+      {
+        "idPedido": 45,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-07-22",
+        "ValorTotalPedido": 498.0,
+        "Cliente_idCliente": 43
+      },
+      {
+        "idPedido": 46,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-08-25",
+        "ValorTotalPedido": 75.0,
+        "Cliente_idCliente": 44
+      },
+      {
+        "idPedido": 47,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-09-01",
+        "ValorTotalPedido": 199.0,
+        "Cliente_idCliente": 45
+      },
+      {
+        "idPedido": 48,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-01-04",
+        "ValorTotalPedido": 1900.0,
+        "Cliente_idCliente": 46
+      },
+      {
+        "idPedido": 49,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-02-07",
+        "ValorTotalPedido": 15.0,
+        "Cliente_idCliente": 47
+      },
+      {
+        "idPedido": 50,
+        "Status_idStatus": 1,
+        "DataPedido": "2026-03-10",
+        "ValorTotalPedido": 320.0,
+        "Cliente_idCliente": 48
+      },
+      {
+        "idPedido": 51,
+        "Status_idStatus": 2,
+        "DataPedido": "2026-04-13",
+        "ValorTotalPedido": 7000.0,
+        "Cliente_idCliente": 49
+      },
+      {
+        "idPedido": 52,
+        "Status_idStatus": 3,
+        "DataPedido": "2026-05-16",
+        "ValorTotalPedido": 269.7,
+        "Cliente_idCliente": 50
       }
     ],
     "Pedido_has_Produto": [
@@ -390,6 +1908,328 @@
         "Produto_idProduto": 8,
         "Quantidade": 2,
         "PrecoUnitario": 320
+      },
+      {
+        "idPedidoProduto": 9,
+        "Pedido_idPedido": 7,
+        "Produto_idProduto": 5,
+        "Quantidade": 3,
+        "PrecoUnitario": 199.0
+      },
+      {
+        "idPedidoProduto": 10,
+        "Pedido_idPedido": 8,
+        "Produto_idProduto": 6,
+        "Quantidade": 1,
+        "PrecoUnitario": 950.0
+      },
+      {
+        "idPedidoProduto": 11,
+        "Pedido_idPedido": 9,
+        "Produto_idProduto": 7,
+        "Quantidade": 2,
+        "PrecoUnitario": 5.0
+      },
+      {
+        "idPedidoProduto": 12,
+        "Pedido_idPedido": 10,
+        "Produto_idProduto": 8,
+        "Quantidade": 3,
+        "PrecoUnitario": 320.0
+      },
+      {
+        "idPedidoProduto": 13,
+        "Pedido_idPedido": 11,
+        "Produto_idProduto": 1,
+        "Quantidade": 1,
+        "PrecoUnitario": 3500.0
+      },
+      {
+        "idPedidoProduto": 14,
+        "Pedido_idPedido": 12,
+        "Produto_idProduto": 2,
+        "Quantidade": 2,
+        "PrecoUnitario": 89.9
+      },
+      {
+        "idPedidoProduto": 15,
+        "Pedido_idPedido": 13,
+        "Produto_idProduto": 3,
+        "Quantidade": 3,
+        "PrecoUnitario": 249.0
+      },
+      {
+        "idPedidoProduto": 16,
+        "Pedido_idPedido": 14,
+        "Produto_idProduto": 4,
+        "Quantidade": 1,
+        "PrecoUnitario": 25.0
+      },
+      {
+        "idPedidoProduto": 17,
+        "Pedido_idPedido": 15,
+        "Produto_idProduto": 5,
+        "Quantidade": 2,
+        "PrecoUnitario": 199.0
+      },
+      {
+        "idPedidoProduto": 18,
+        "Pedido_idPedido": 16,
+        "Produto_idProduto": 6,
+        "Quantidade": 3,
+        "PrecoUnitario": 950.0
+      },
+      {
+        "idPedidoProduto": 19,
+        "Pedido_idPedido": 17,
+        "Produto_idProduto": 7,
+        "Quantidade": 1,
+        "PrecoUnitario": 5.0
+      },
+      {
+        "idPedidoProduto": 20,
+        "Pedido_idPedido": 18,
+        "Produto_idProduto": 8,
+        "Quantidade": 2,
+        "PrecoUnitario": 320.0
+      },
+      {
+        "idPedidoProduto": 21,
+        "Pedido_idPedido": 19,
+        "Produto_idProduto": 1,
+        "Quantidade": 3,
+        "PrecoUnitario": 3500.0
+      },
+      {
+        "idPedidoProduto": 22,
+        "Pedido_idPedido": 20,
+        "Produto_idProduto": 2,
+        "Quantidade": 1,
+        "PrecoUnitario": 89.9
+      },
+      {
+        "idPedidoProduto": 23,
+        "Pedido_idPedido": 21,
+        "Produto_idProduto": 3,
+        "Quantidade": 2,
+        "PrecoUnitario": 249.0
+      },
+      {
+        "idPedidoProduto": 24,
+        "Pedido_idPedido": 22,
+        "Produto_idProduto": 4,
+        "Quantidade": 3,
+        "PrecoUnitario": 25.0
+      },
+      {
+        "idPedidoProduto": 25,
+        "Pedido_idPedido": 23,
+        "Produto_idProduto": 5,
+        "Quantidade": 1,
+        "PrecoUnitario": 199.0
+      },
+      {
+        "idPedidoProduto": 26,
+        "Pedido_idPedido": 24,
+        "Produto_idProduto": 6,
+        "Quantidade": 2,
+        "PrecoUnitario": 950.0
+      },
+      {
+        "idPedidoProduto": 27,
+        "Pedido_idPedido": 25,
+        "Produto_idProduto": 7,
+        "Quantidade": 3,
+        "PrecoUnitario": 5.0
+      },
+      {
+        "idPedidoProduto": 28,
+        "Pedido_idPedido": 26,
+        "Produto_idProduto": 8,
+        "Quantidade": 1,
+        "PrecoUnitario": 320.0
+      },
+      {
+        "idPedidoProduto": 29,
+        "Pedido_idPedido": 27,
+        "Produto_idProduto": 1,
+        "Quantidade": 2,
+        "PrecoUnitario": 3500.0
+      },
+      {
+        "idPedidoProduto": 30,
+        "Pedido_idPedido": 28,
+        "Produto_idProduto": 2,
+        "Quantidade": 3,
+        "PrecoUnitario": 89.9
+      },
+      {
+        "idPedidoProduto": 31,
+        "Pedido_idPedido": 29,
+        "Produto_idProduto": 3,
+        "Quantidade": 1,
+        "PrecoUnitario": 249.0
+      },
+      {
+        "idPedidoProduto": 32,
+        "Pedido_idPedido": 30,
+        "Produto_idProduto": 4,
+        "Quantidade": 2,
+        "PrecoUnitario": 25.0
+      },
+      {
+        "idPedidoProduto": 33,
+        "Pedido_idPedido": 31,
+        "Produto_idProduto": 5,
+        "Quantidade": 3,
+        "PrecoUnitario": 199.0
+      },
+      {
+        "idPedidoProduto": 34,
+        "Pedido_idPedido": 32,
+        "Produto_idProduto": 6,
+        "Quantidade": 1,
+        "PrecoUnitario": 950.0
+      },
+      {
+        "idPedidoProduto": 35,
+        "Pedido_idPedido": 33,
+        "Produto_idProduto": 7,
+        "Quantidade": 2,
+        "PrecoUnitario": 5.0
+      },
+      {
+        "idPedidoProduto": 36,
+        "Pedido_idPedido": 34,
+        "Produto_idProduto": 8,
+        "Quantidade": 3,
+        "PrecoUnitario": 320.0
+      },
+      {
+        "idPedidoProduto": 37,
+        "Pedido_idPedido": 35,
+        "Produto_idProduto": 1,
+        "Quantidade": 1,
+        "PrecoUnitario": 3500.0
+      },
+      {
+        "idPedidoProduto": 38,
+        "Pedido_idPedido": 36,
+        "Produto_idProduto": 2,
+        "Quantidade": 2,
+        "PrecoUnitario": 89.9
+      },
+      {
+        "idPedidoProduto": 39,
+        "Pedido_idPedido": 37,
+        "Produto_idProduto": 3,
+        "Quantidade": 3,
+        "PrecoUnitario": 249.0
+      },
+      {
+        "idPedidoProduto": 40,
+        "Pedido_idPedido": 38,
+        "Produto_idProduto": 4,
+        "Quantidade": 1,
+        "PrecoUnitario": 25.0
+      },
+      {
+        "idPedidoProduto": 41,
+        "Pedido_idPedido": 39,
+        "Produto_idProduto": 5,
+        "Quantidade": 2,
+        "PrecoUnitario": 199.0
+      },
+      {
+        "idPedidoProduto": 42,
+        "Pedido_idPedido": 40,
+        "Produto_idProduto": 6,
+        "Quantidade": 3,
+        "PrecoUnitario": 950.0
+      },
+      {
+        "idPedidoProduto": 43,
+        "Pedido_idPedido": 41,
+        "Produto_idProduto": 7,
+        "Quantidade": 1,
+        "PrecoUnitario": 5.0
+      },
+      {
+        "idPedidoProduto": 44,
+        "Pedido_idPedido": 42,
+        "Produto_idProduto": 8,
+        "Quantidade": 2,
+        "PrecoUnitario": 320.0
+      },
+      {
+        "idPedidoProduto": 45,
+        "Pedido_idPedido": 43,
+        "Produto_idProduto": 1,
+        "Quantidade": 3,
+        "PrecoUnitario": 3500.0
+      },
+      {
+        "idPedidoProduto": 46,
+        "Pedido_idPedido": 44,
+        "Produto_idProduto": 2,
+        "Quantidade": 1,
+        "PrecoUnitario": 89.9
+      },
+      {
+        "idPedidoProduto": 47,
+        "Pedido_idPedido": 45,
+        "Produto_idProduto": 3,
+        "Quantidade": 2,
+        "PrecoUnitario": 249.0
+      },
+      {
+        "idPedidoProduto": 48,
+        "Pedido_idPedido": 46,
+        "Produto_idProduto": 4,
+        "Quantidade": 3,
+        "PrecoUnitario": 25.0
+      },
+      {
+        "idPedidoProduto": 49,
+        "Pedido_idPedido": 47,
+        "Produto_idProduto": 5,
+        "Quantidade": 1,
+        "PrecoUnitario": 199.0
+      },
+      {
+        "idPedidoProduto": 50,
+        "Pedido_idPedido": 48,
+        "Produto_idProduto": 6,
+        "Quantidade": 2,
+        "PrecoUnitario": 950.0
+      },
+      {
+        "idPedidoProduto": 51,
+        "Pedido_idPedido": 49,
+        "Produto_idProduto": 7,
+        "Quantidade": 3,
+        "PrecoUnitario": 5.0
+      },
+      {
+        "idPedidoProduto": 52,
+        "Pedido_idPedido": 50,
+        "Produto_idProduto": 8,
+        "Quantidade": 1,
+        "PrecoUnitario": 320.0
+      },
+      {
+        "idPedidoProduto": 53,
+        "Pedido_idPedido": 51,
+        "Produto_idProduto": 1,
+        "Quantidade": 2,
+        "PrecoUnitario": 3500.0
+      },
+      {
+        "idPedidoProduto": 54,
+        "Pedido_idPedido": 52,
+        "Produto_idProduto": 2,
+        "Quantidade": 3,
+        "PrecoUnitario": 89.9
       }
     ]
   },
